@@ -1,6 +1,7 @@
 ## Todo
 
 - actually make dbs
+- make auth button look ok on mobile
 - foreground background ?
 
 ---

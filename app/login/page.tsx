@@ -21,6 +21,7 @@ export default function Login({
       password,
     });
 
+    console.log(error);
     if (error) {
       return redirect("/login?message=Could not authenticate user");
     }
@@ -47,11 +48,13 @@ export default function Login({
       },
     });
 
+    console.log(error);
     if (error) {
       return redirect("/login?message=Could not authenticate user");
     }
 
-    return redirect("/login?message=Check email to continue sign in process");
+    // return redirect("/login?message=Check email to continue sign in process");
+    return redirect("/login?message=Account created, please sign in");
   };
 
   return (
@@ -85,8 +88,8 @@ export default function Login({
           name="email"
           value="amycatx10@gmail.com"
         />
-
-        {/* <label className="text-md" htmlFor="email">
+{/* 
+        <label className="text-md" htmlFor="email">
           Email
         </label>
         <input

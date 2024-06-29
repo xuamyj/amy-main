@@ -1,0 +1,5 @@
+drop trigger on_auth_user_created on auth.users;
+drop function public.handle_new_user();
+
+-- then delete table from Tables with Cascade
+-- then delete user from Auth
