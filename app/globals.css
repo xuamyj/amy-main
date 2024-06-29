@@ -3,6 +3,38 @@
 @tailwind utilities;
 
 @layer base {
+  h2{
+    @apply font-bold;
+    @apply text-4xl;
+    @apply mb-4;
+    @apply mt-6;
+    @apply text-indigo-900;
+  }
+
+  h3 {
+    @apply font-bold;
+    @apply text-xl;
+    @apply mt-3;
+  }
+
+  .divider {
+    @apply w-full;
+    @apply border;
+    @apply mt-3;
+  }
+
+  .nav-button {
+    @apply py-2;
+    @apply px-3;
+    @apply flex;
+    @apply rounded-md;
+    @apply no-underline;
+    @apply border-2;
+    @apply border-indigo-800;
+    @apply text-indigo-800;
+    @apply hover:bg-indigo-200;
+  }
+
   :root {
     --background: 200 20% 98%;
     --btn-background: 200 10% 91%;

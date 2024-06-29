@@ -25,7 +25,10 @@ export default function Login({
       return redirect("/login?message=Could not authenticate user");
     }
 
-    return redirect("/protected");
+    // return redirect("/protected");
+
+    // Amy: Lebre is the only app for now, so go there when you sign in
+    return redirect("/lebre");
   };
 
   const signUp = async (formData: FormData) => {
