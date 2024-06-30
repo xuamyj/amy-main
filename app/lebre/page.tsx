@@ -1,7 +1,7 @@
-import { createClient } from "@/utils/supabase/server";
+import { AmySupabaseServiceInstance } from "@/utils/supabase/amy/SupabaseService";
 
 export default async function LebreHomePage() {
-  const supabaseDB = createClient();
+  const supabase = AmySupabaseServiceInstance.getSupabase();
 
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">

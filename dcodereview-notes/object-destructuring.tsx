@@ -35,9 +35,3 @@ import { thing } from 'whatever'; // without default, D says to always use this.
 // `[key: string]` means the type of the key is ANY string, NOT specific strings like MenuEnum
 `[key: bool]` // NOT SEEN very often
 `[key: 'hake' | 'salmon' | 'bisque']` // this is if it's specific
-
-
-/*  object destructuring for jsx + props */ 
-
-
-/*  { } (y); user.id just once? (incl submitDisplayName inner one); display_name not copy; anything else very un-javascript-y */ 
