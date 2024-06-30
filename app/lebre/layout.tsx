@@ -1,4 +1,5 @@
 import AuthButton from "@/components/AuthButton";
+import { getUserId } from "@/utils/supabase/amy/helpers";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -9,12 +10,9 @@ export default async function ProtectedLayout({
   children: React.ReactNode
 }) {
   const supabase = createClient();
+  const userId = await getUserId(supabase);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  if (!userId) {
     return redirect("/login");
   }
 

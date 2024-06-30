@@ -37,7 +37,5 @@ import { thing } from 'whatever'; // without default, D says to always use this.
 `[key: 'hake' | 'salmon' | 'bisque']` // this is if it's specific
 
 
-/*  object destructuring for jsx + props */ 
-
-
 /*  { } (y); user.id just once? (incl submitDisplayName inner one); display_name not copy; anything else very un-javascript-y */ 
+// ^ done!

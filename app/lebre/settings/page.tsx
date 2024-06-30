@@ -1,34 +1,17 @@
 import { SubmitButton } from "@/app/login/submit-button";
 import { createClient } from "@/utils/supabase/server";
+import { getUserId, getUserDisplayName } from "@/utils/supabase/amy/helpers";
 import { redirect } from "next/navigation";
 
 export default async function LebreSettingsPage() {
   const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  let displayName : string|null = null;
-  if (user) {
-    const { data, error } = await supabase
-    .from('user_info')
-    .select()
-    .eq('id', user.id);
-
-    if (data && data.length > 0) {
-      displayName = data[0].display_name;
-    }
-  }
+  const displayName = await getUserDisplayName(supabase);
 
   const submitDisplayName = async (formData: FormData) => {
     "use server";
 
     const supabaseDB = createClient();
-
-    const {
-      data: { user },
-    } = await supabaseDB.auth.getUser();
+    const userId = await getUserId(supabaseDB);
 
     // Convert FormData to a JavaScript object
     const formObject: { [key: string]: any } = {};
@@ -37,11 +20,11 @@ export default async function LebreSettingsPage() {
     }
     console.log(formObject);
 
-    if (user) {
+    if (userId) {
       const { error } = await supabaseDB
       .from('user_info')
       .update(formObject)
-      .eq('id', user.id)
+      .eq('id', userId)
 
       if (error) {
         console.error('Error inserting data:', error);
