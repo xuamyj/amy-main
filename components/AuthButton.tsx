@@ -17,7 +17,7 @@ export default async function AuthButton() {
     return redirect("/login");
   };
 
-  let displayName = null;
+  let displayName : string|null = null;
   if (user) {
     const { data, error } = await supabase
     .from('user_info')
