@@ -35,6 +35,16 @@
     @apply hover:bg-indigo-200;
   }
 
+  .submit-button {
+    @apply bg-indigo-300;
+    @apply hover:bg-indigo-400;
+    @apply rounded-md;
+    @apply px-4;
+    @apply py-2;
+    @apply text-foreground;
+    @apply mb-2;
+  }
+
   :root {
     --background: 200 20% 98%;
     --btn-background: 200 10% 91%;

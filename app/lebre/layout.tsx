@@ -23,18 +23,10 @@ export default async function ProtectedLayout({
       <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
         <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
           <div className="flex justify-start gap-3">
-            <Link
-              href="/lebre"
-              className="nav-button"
-            >
-              Home
-            </Link>
-            <Link
-              href="/lebre/calendar"
-              className="nav-button"
-            >
-              Calendar
-            </Link>
+            <Link href="/lebre" className="nav-button"> Home </Link>
+            <Link href="/lebre/calendar" className="nav-button"> Calendar </ Link>
+            <Link href="/lebre/create_board" className="nav-button"> Create board </ Link>
+            <Link href="/lebre/settings" className="nav-button"> Settings </ Link>
           </div>
           <AuthButton />
         </div>
