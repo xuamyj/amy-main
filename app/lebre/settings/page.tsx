@@ -47,7 +47,7 @@ export default async function LebreSettingsPage() {
           Change display name: 
         </label>
         <input type="text" id="label_1" 
-        name="display_name" required />
+        name="display_name" className="mx-3" required />
 
         <SubmitButton
           formAction={submitDisplayName}

@@ -102,7 +102,7 @@ export default function Login({
           Password
         </label>
         <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
+          className="rounded-md px-4 py-2 bg-inherit mb-6"
           type="password"
           name="password"
           placeholder="••••••••"

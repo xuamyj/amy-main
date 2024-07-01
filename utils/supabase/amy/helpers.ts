@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { AmySupabaseClient } from "../server";
+import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase";
 
 export async function getUserId(supabaseClient: AmySupabaseClient) {
   const {
@@ -26,7 +27,9 @@ export async function getUserDisplayName(supabaseClient: AmySupabaseClient) {
   return displayName;
 }
 
-export async function getUserBoards(supabaseClient: AmySupabaseClient) {
+// --------
+
+export async function getUserBoardsAsArray(supabaseClient: AmySupabaseClient) {
   const userId = await getUserId(supabaseClient);
 
   let boards = null;
@@ -41,19 +44,57 @@ export async function getUserBoards(supabaseClient: AmySupabaseClient) {
   return boards;
 }
 
-export async function getBoardDays(supabaseClient: AmySupabaseClient, boardId: number) {
-  let boardDays = null;
-  if (boardId) {
-    const { data, error } = await supabaseClient
-    .from('board_days')
-    .select()
-    .eq('board_id', boardId);
+export async function getUserBoardsAsRecord(supabaseClient: AmySupabaseClient) {
+  const boardsArray = await getUserBoardsAsArray(supabaseClient);
 
-    boardDays = data;
-    console.log(boardDays);
-  }
-  return boardDays;
+  const boardsRecord : Record<string, Tables<'boards'>> = {}; // todo
+  if (boardsArray) {
+    for (const board of boardsArray) {
+      boardsRecord[board.id] = board;
+    }
+  } 
+  return boardsRecord;
 }
+
+// --------
+
+export async function getBoardDaysForBoard(supabaseClient: AmySupabaseClient, boardId: number) {
+  const { data, error } = await supabaseClient
+  .from('board_days')
+  .select()
+  .eq('board_id', boardId);
+
+  return data;  
+}
+
+export async function getBoardDaysForDay(supabaseClient: AmySupabaseClient, dayInt: number) {
+  const { data, error } = await supabaseClient
+  .from('board_days')
+  .select()
+  .eq('created_day', dayInt);
+
+  return data;
+}
+
+export async function getBoardDaysForTodayAsRecord(supabaseClient: AmySupabaseClient) {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Adding 1 because months are zero-based
+  const day = String(currentDate.getDate()).padStart(2, '0');
+
+  const dayInt = parseInt(`${year}${month}${day}`);
+  const boardDaysArray = await getBoardDaysForDay(supabaseClient, dayInt);
+
+  const boardDaysRecord : Record<string, Tables<'board_days'>> = {}; // todo
+  if (boardDaysArray) {
+    for (const boardDay of boardDaysArray) {
+      boardDaysRecord[boardDay.board_id] = boardDay;
+    }
+  } 
+  return boardDaysRecord;
+}
+
+// --------
 
 export async function getUserDayNotes(supabaseClient: AmySupabaseClient) {
   const userId = await getUserId(supabaseClient);

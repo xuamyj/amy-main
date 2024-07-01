@@ -1,13 +1,13 @@
-import { getBoardDays, getUserBoards, getUserDayNotes } from "@/utils/supabase/amy/helpers";
+import { getBoardDaysForBoard, getUserBoardsAsArray, getUserDayNotes } from "@/utils/supabase/amy/helpers";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function LebreCalendarPage() {
   const supabase = createClient();
-  const boards = await getUserBoards(supabase);
+  const boards = await getUserBoardsAsArray(supabase);
   const dayNotes = await getUserDayNotes(supabase);
 
   const boardDayPromises = boards?.map(async function(board) {
-    const boardDays = await getBoardDays(supabase, board.id);
+    const boardDays = await getBoardDaysForBoard(supabase, board.id);
     return [board, boardDays] as const;
   }) || [];
   const boardDayTuples = await Promise.all(boardDayPromises);
@@ -16,7 +16,8 @@ export default async function LebreCalendarPage() {
 
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">
-      <h2>Lebre: All days</h2>
+      <h2>Lebre: All boards</h2>
+
       {boardDayTuples && boardDayTuples.map(boardDayTuple => (
       <div key={`board-${boardDayTuple[0].id}`}>
         <h3>{boardDayTuple[0].board_title}</h3>

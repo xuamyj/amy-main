@@ -1,6 +1,10 @@
 ## Todo
 
-- actually make dbs
+- sections
+- create (+ delete) board
+- today's done (+ delete)
+- today's not done (edit to be done)
+
 - make auth button look ok on mobile
 - foreground background ?
 
