@@ -41,6 +41,20 @@ export async function getUserBoards(supabaseClient: AmySupabaseClient) {
   return boards;
 }
 
+export async function getBoardDays(supabaseClient: AmySupabaseClient, boardId: number) {
+  let boardDays = null;
+  if (boardId) {
+    const { data, error } = await supabaseClient
+    .from('board_days')
+    .select()
+    .eq('board_id', boardId);
+
+    boardDays = data;
+    console.log(boardDays);
+  }
+  return boardDays;
+}
+
 export async function getUserDayNotes(supabaseClient: AmySupabaseClient) {
   const userId = await getUserId(supabaseClient);
 
