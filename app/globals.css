@@ -17,6 +17,11 @@
     @apply mt-3;
   }
 
+  ul {
+    @apply list-inside;
+    @apply list-disc;
+  }
+
   .divider {
     @apply w-full;
     @apply border;

@@ -1,6 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import { AmySupabaseClient } from "../server";
 
-export async function getUserId(supabaseClient: SupabaseClient) {
+export async function getUserId(supabaseClient: AmySupabaseClient) {
   const {
     data: { user },
   } = await supabaseClient.auth.getUser();
@@ -8,7 +9,7 @@ export async function getUserId(supabaseClient: SupabaseClient) {
   return user?.id || null;
 }
 
-export async function getUserDisplayName(supabaseClient: SupabaseClient) {
+export async function getUserDisplayName(supabaseClient: AmySupabaseClient) {
   const userId = await getUserId(supabaseClient);
 
   let displayName : string|null = null;
@@ -23,4 +24,34 @@ export async function getUserDisplayName(supabaseClient: SupabaseClient) {
     }
   }
   return displayName;
+}
+
+export async function getUserBoards(supabaseClient: AmySupabaseClient) {
+  const userId = await getUserId(supabaseClient);
+
+  let boards = null;
+  if (userId) {
+    const { data, error } = await supabaseClient
+    .from('boards')
+    .select()
+    .eq('user_id', userId);
+
+    boards = data;
+  }
+  return boards;
+}
+
+export async function getUserDayNotes(supabaseClient: AmySupabaseClient) {
+  const userId = await getUserId(supabaseClient);
+
+  let dayNotes = null;
+  if (userId) {
+    const { data, error } = await supabaseClient
+    .from('day_notes')
+    .select()
+    .eq('user_id', userId);
+
+    dayNotes = data;
+  }
+  return dayNotes;
 }
