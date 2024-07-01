@@ -8,6 +8,11 @@
 - make auth button look ok on mobile
 - foreground background ?
 
+- lebre/calendar/page.tsx: 
+    const boardsA = await getUserBoardsAsArray(supabase, 'A');
+    const boardsB = await getUserBoardsAsArray(supabase, 'B');
+  start promises at the same time? (and same with the pair after)
+
 ---
 
 <a href="https://demo-nextjs-with-supabase.vercel.app/">

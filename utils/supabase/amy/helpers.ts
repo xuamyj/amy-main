@@ -29,23 +29,28 @@ export async function getUserDisplayName(supabaseClient: AmySupabaseClient) {
 
 // --------
 
-export async function getUserBoardsAsArray(supabaseClient: AmySupabaseClient) {
+export async function getUserBoardsAsArray(supabaseClient: AmySupabaseClient, section: string | null = null) {
   const userId = await getUserId(supabaseClient);
 
   let boards = null;
   if (userId) {
-    const { data, error } = await supabaseClient
+    let asyncSupabaseCall = supabaseClient
     .from('boards')
     .select()
     .eq('user_id', userId);
 
+    if (section) {
+      asyncSupabaseCall = asyncSupabaseCall.eq('section', section);
+    }
+    
+    const { data, error } = await asyncSupabaseCall;
     boards = data;
   }
   return boards;
 }
 
-export async function getUserBoardsAsRecord(supabaseClient: AmySupabaseClient) {
-  const boardsArray = await getUserBoardsAsArray(supabaseClient);
+export async function getUserBoardsAsRecord(supabaseClient: AmySupabaseClient, section: string | null = null) {
+  const boardsArray = await getUserBoardsAsArray(supabaseClient, section);
 
   const boardsRecord : Record<string, Tables<'boards'>> = {}; // todo
   if (boardsArray) {

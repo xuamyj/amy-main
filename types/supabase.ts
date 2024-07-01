@@ -52,18 +52,21 @@ export type Database = {
           board_title: string
           created_at: string
           id: number
+          section: string
           user_id: string
         }
         Insert: {
           board_title: string
           created_at?: string
           id?: number
+          section?: string
           user_id: string
         }
         Update: {
           board_title?: string
           created_at?: string
           id?: number
+          section?: string
           user_id?: string
         }
         Relationships: [

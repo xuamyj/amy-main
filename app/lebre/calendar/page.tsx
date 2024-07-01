@@ -1,58 +1,36 @@
 import { getBoardDaysForBoard, getUserBoardsAsArray, getUserDayNotes } from "@/utils/supabase/amy/helpers";
 import { createClient } from "@/utils/supabase/server";
+import { BoardWithDays } from "./board-with-days";
+import { Tables } from "@/types/supabase";
 
 export default async function LebreCalendarPage() {
   const supabase = createClient();
-  const boards = await getUserBoardsAsArray(supabase);
   const dayNotes = await getUserDayNotes(supabase);
 
-  const boardDayPromises = boards?.map(async function(board) {
-    const boardDays = await getBoardDaysForBoard(supabase, board.id);
-    return [board, boardDays] as const;
-  }) || [];
-  const boardDayTuples = await Promise.all(boardDayPromises);
-  // const firstBoardInfo = boardDayTuples[0][0];
-  // const firstBoardDayList = boardDayTuples[0][1];
+  async function getTuplesFromBoards(boards: Tables<'boards'>[] | null) {
+    const boardDayPromises = boards?.map(async function(board) {
+      const boardDays = await getBoardDaysForBoard(supabase, board.id);
+      return [board, boardDays] as const;
+    }) || [];
+    const boardDayTuples = await Promise.all(boardDayPromises);
+
+    return boardDayTuples;
+  }
+
+  const boardsA = await getUserBoardsAsArray(supabase, 'A');
+  const boardsB = await getUserBoardsAsArray(supabase, 'B');
+  const boardDayTuplesA = await getTuplesFromBoards(boardsA);
+  const boardDayTuplesB = await getTuplesFromBoards(boardsB);
 
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">
       <h2>Lebre: All boards</h2>
 
-      {boardDayTuples && boardDayTuples.map(boardDayTuple => (
-      <div key={`board-${boardDayTuple[0].id}`}>
-        <h3>{boardDayTuple[0].board_title}</h3>
-
-        {boardDayTuple[1] &&
-          <ul>
-            {boardDayTuple[1].map(boardDay => (
-            <li key={`boardDay-${boardDay.id}`}>
-              {boardDay.created_day} : {String(boardDay.done)}
-            </li>
-            ))}
-          </ul>
-        }
-
-      </div>
-      ))}
+      <BoardWithDays boardDayTuples={boardDayTuplesA}/>
 
       <div className="divider"></div>
 
-      <h3>[this one's fake] Tidy</h3>
-      <p>
-        [eventually a list of days? ]
-      </p>
-      <h3>[this one's fake] Study language</h3>
-      <p>
-        [eventually a list of days? ]
-      </p>
-      <h3>[this one's fake] Practice coding</h3>
-      <p>
-        [eventually a list of days? ]
-      </p>
-      <h3>[this one's fake] Sewing or weaving or stamps</h3>
-      <p>
-        [eventually a list of days? ]
-      </p>
+      <BoardWithDays boardDayTuples={boardDayTuplesB}/>
 
       <div className="divider"></div>
       
