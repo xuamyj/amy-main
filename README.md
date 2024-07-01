@@ -1,6 +1,5 @@
 ## Todo
 
-- sections
 - create (+ delete) board
 - today's done (+ delete)
 - today's not done (edit to be done)
@@ -12,6 +11,7 @@
     const boardsA = await getUserBoardsAsArray(supabase, 'A');
     const boardsB = await getUserBoardsAsArray(supabase, 'B');
   start promises at the same time? (and same with the pair after)
+- one day might need more sections / rearrange boards within sections? 
 
 ---
 

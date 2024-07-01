@@ -37,7 +37,7 @@ export default async function LebreSettingsPage() {
 
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">
-      <h2>Lebre: Edit User</h2>
+      <h2>Lebre: Edit user</h2>
       <p>
         Display name: {displayName}
       </p>
@@ -52,7 +52,7 @@ export default async function LebreSettingsPage() {
         <SubmitButton
           formAction={submitDisplayName}
           className="submit-button"
-          pendingText="Loading..."
+          pendingText="Working..."
         >
           Submit
         </SubmitButton>

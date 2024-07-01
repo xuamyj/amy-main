@@ -34,6 +34,11 @@
     @apply focus:outline-btn-background-hover;
   }
 
+  select {
+    @apply py-1;
+    @apply px-2;
+  }
+
   .label-like-h3 {
     @apply font-bold;
     @apply text-xl;

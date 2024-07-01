@@ -52,7 +52,7 @@ export async function getUserBoardsAsArray(supabaseClient: AmySupabaseClient, se
 export async function getUserBoardsAsRecord(supabaseClient: AmySupabaseClient, section: string | null = null) {
   const boardsArray = await getUserBoardsAsArray(supabaseClient, section);
 
-  const boardsRecord : Record<string, Tables<'boards'>> = {}; // todo
+  const boardsRecord : Record<string, Tables<'boards'>> = {}; 
   if (boardsArray) {
     for (const board of boardsArray) {
       boardsRecord[board.id] = board;
@@ -90,7 +90,7 @@ export async function getBoardDaysForTodayAsRecord(supabaseClient: AmySupabaseCl
   const dayInt = parseInt(`${year}${month}${day}`);
   const boardDaysArray = await getBoardDaysForDay(supabaseClient, dayInt);
 
-  const boardDaysRecord : Record<string, Tables<'board_days'>> = {}; // todo
+  const boardDaysRecord : Record<string, Tables<'board_days'>> = {}; 
   if (boardDaysArray) {
     for (const boardDay of boardDaysArray) {
       boardDaysRecord[boardDay.board_id] = boardDay;

@@ -22,7 +22,9 @@ export function BoardWithDays({ boardDayTuples }: BoardWithDaysProps) {
         <ul>
           {boardDayTuple[1].map(boardDay => (
           <li key={`boardDay-${boardDay.id}`}>
-            {boardDay.created_day} : {String(boardDay.done)}
+            {boardDay.created_day} : {String(boardDay.done)} {boardDay.notes && 
+            <span>: {boardDay.notes}</span>
+            }
           </li>
           ))}
         </ul>
