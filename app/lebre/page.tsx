@@ -6,6 +6,18 @@ import { redirect } from "next/navigation";
 import { SubmitButton } from "../login/submit-button";
 import { DayNotesSection } from "./daynotes-section";
 
+function formatDayNoteForSupabase(formData: FormData, userId: string) {
+  // Convert FormData to a JavaScript object
+  const formObject: { [key: string]: any } = {};
+  for (const [key, value] of Array.from(formData.entries())) {
+    formObject[key] = value;
+  }
+  formObject['user_id'] = userId;
+  formObject['created_day'] = getTodayYYYYMMDD();
+
+  return formObject;
+}
+
 export default async function LebreHomePage() {
   const supabase = createClient();
   const boards = await getUserBoardsAsArray(supabase);
@@ -83,19 +95,6 @@ export default async function LebreHomePage() {
     }
   }
 
-  // function formatDayNoteForSupabase(formData: FormData, userId: string) {
-
-  //   // // Convert FormData to a JavaScript object
-  //   // const formObject: { [key: string]: any } = {};
-  //   // for (const [key, value] of Array.from(formData.entries())) {
-  //   //   formObject[key] = value;
-  //   // }
-  //   // formObject['user_id'] = userId;
-  //   // formObject['created_day'] = getTodayYYYYMMDD();
-
-  //   return formObject;
-  // }
-
   const createDayNote = async (formData: FormData) => {
     "use server";
 
@@ -103,17 +102,7 @@ export default async function LebreHomePage() {
     const userId = await getUserId(supabaseDB);
 
     if (userId) {
-      
-
-      // Convert FormData to a JavaScript object
-      const formObject: { [key: string]: any } = {};
-      for (const [key, value] of Array.from(formData.entries())) {
-        formObject[key] = value;
-      }
-      formObject['user_id'] = userId;
-      formObject['created_day'] = getTodayYYYYMMDD();
-
-
+      const formObject = formatDayNoteForSupabase(formData, userId);
       console.log('createDayNote():', formObject);
 
       const { error } = await supabaseDB
@@ -136,18 +125,8 @@ export default async function LebreHomePage() {
     const userId = await getUserId(supabaseDB);
 
     if (userId) {
-      
-
-      // Convert FormData to a JavaScript object
-      const formObject: { [key: string]: any } = {};
-      for (const [key, value] of Array.from(formData.entries())) {
-        formObject[key] = value;
-      }
-      formObject['user_id'] = userId;
-      formObject['created_day'] = getTodayYYYYMMDD();
-
-
-      console.log('updateDayNote():', formObject);
+      const formObject = formatDayNoteForSupabase(formData, userId);
+      console.log('createDayNote():', formObject);
 
       const { error } = await supabaseDB
       .from('day_notes')
