@@ -1,17 +1,28 @@
-import { getBoardDaysForTodayAsRecord, getTodayYYYYMMDD, getUserBoardsAsArray, getUserId } from "@/utils/supabase/amy/helpers";
-import { createClient } from "@/utils/supabase/server";
+import { getBoardDaysForTodayAsRecord, getDayNotesForToday, getTodayYYYYMMDD, getUserBoardsAsArray, getUserId } from "@/utils/supabase/amy/helpers";
+import { AmySupabaseClient, createClient } from "@/utils/supabase/server";
 import { BoardWithDoneButton } from "./board-with-donebutton";
 import { TablesInsert } from "@/types/supabase";
 import { redirect } from "next/navigation";
+import { SubmitButton } from "../login/submit-button";
+import { DayNotesSection } from "./daynotes-section";
 
 export default async function LebreHomePage() {
   const supabase = createClient();
   const boards = await getUserBoardsAsArray(supabase);
   const boardDays = await getBoardDaysForTodayAsRecord(supabase);
+  const dayNotes = await getDayNotesForToday(supabase);
 
   // console.log('getUserBoardsAsArray', boards);
   // console.log('getBoardDaysForTodayAsRecord', boardDays);
   // console.log('\n')
+
+  let currDayNoteText: string | null = null;
+  let currDayNoteId: number | null = null;
+
+  if (dayNotes && dayNotes[0]) {
+    currDayNoteText = dayNotes[0].notes;
+    currDayNoteId = dayNotes[0].id;
+  }
 
   let doneBoardDaysArr: {boardDayId: number, boardTitle: string; notes: string | null}[] = [];
   let remainingBoardsArrA: {boardId: number, boardTitle: string}[] = [];
@@ -72,6 +83,86 @@ export default async function LebreHomePage() {
     }
   }
 
+  // function formatDayNoteForSupabase(formData: FormData, userId: string) {
+
+  //   // // Convert FormData to a JavaScript object
+  //   // const formObject: { [key: string]: any } = {};
+  //   // for (const [key, value] of Array.from(formData.entries())) {
+  //   //   formObject[key] = value;
+  //   // }
+  //   // formObject['user_id'] = userId;
+  //   // formObject['created_day'] = getTodayYYYYMMDD();
+
+  //   return formObject;
+  // }
+
+  const createDayNote = async (formData: FormData) => {
+    "use server";
+
+    const supabaseDB = createClient();
+    const userId = await getUserId(supabaseDB);
+
+    if (userId) {
+      
+
+      // Convert FormData to a JavaScript object
+      const formObject: { [key: string]: any } = {};
+      for (const [key, value] of Array.from(formData.entries())) {
+        formObject[key] = value;
+      }
+      formObject['user_id'] = userId;
+      formObject['created_day'] = getTodayYYYYMMDD();
+
+
+      console.log('createDayNote():', formObject);
+
+      const { error } = await supabaseDB
+      .from('day_notes')
+      .insert(formObject as TablesInsert<'day_notes'>); // todo: is this right? 
+
+      if (error) {
+        console.error('Error inserting data:', error);
+      } else {
+        console.log('Data inserted successfully');
+        return redirect("/lebre");
+      }
+    }
+  }
+
+  const updateDayNote = async (formData: FormData) => {
+    "use server";
+
+    const supabaseDB = createClient();
+    const userId = await getUserId(supabaseDB);
+
+    if (userId) {
+      
+
+      // Convert FormData to a JavaScript object
+      const formObject: { [key: string]: any } = {};
+      for (const [key, value] of Array.from(formData.entries())) {
+        formObject[key] = value;
+      }
+      formObject['user_id'] = userId;
+      formObject['created_day'] = getTodayYYYYMMDD();
+
+
+      console.log('updateDayNote():', formObject);
+
+      const { error } = await supabaseDB
+      .from('day_notes')
+      .update(formObject as TablesInsert<'day_notes'>) // todo: is this right? 
+      .eq('id', formObject['id']);
+
+      if (error) {
+        console.error('Error inserting data:', error);
+      } else {
+        console.log('Data inserted successfully');
+        return redirect("/lebre");
+      }
+    }
+  }
+
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">
       <h2>Lebre: Done today</h2>
@@ -95,8 +186,22 @@ export default async function LebreHomePage() {
       <div className="divider"></div>
 
       <h3>Notes :)</h3>
-      <p>Eventually notes will go here</p>
-
+      {currDayNoteText && 
+        <DayNotesSection 
+        currDayNoteText={currDayNoteText} 
+        currDayNoteId={currDayNoteId} 
+        labelVerb="Edit" 
+          submitFunction={updateDayNote} 
+        /> 
+      }
+      {!currDayNoteText && 
+        <DayNotesSection 
+          currDayNoteText={null}
+          currDayNoteId={null} 
+          labelVerb="Add" 
+          submitFunction={createDayNote} 
+        /> 
+      }
     </div>
   );
 }

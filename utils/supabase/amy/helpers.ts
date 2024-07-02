@@ -132,3 +132,24 @@ export async function getUserDayNotes(supabaseClient: AmySupabaseClient) {
   }
   return dayNotes;
 }
+
+export async function getDayNotesForDay(supabaseClient: AmySupabaseClient, dayInt: number) {
+  const userId = await getUserId(supabaseClient);
+
+  let dayNotes = null;
+  if (userId) {
+    const { data, error } = await supabaseClient
+    .from('day_notes')
+    .select()
+    .eq('user_id', userId)
+    .eq('created_day', dayInt);
+
+    dayNotes = data;
+  }
+  return dayNotes;
+}
+
+export async function getDayNotesForToday(supabaseClient: AmySupabaseClient) {
+  const dayInt = getTodayYYYYMMDD();
+  return await getDayNotesForDay(supabaseClient, dayInt);
+}

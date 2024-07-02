@@ -22,7 +22,7 @@
     @apply list-disc;
   }
 
-  input {
+  input, textarea {
     @apply rounded-none;
     @apply py-1;
     @apply px-2;

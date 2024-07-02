@@ -35,7 +35,7 @@ export function BoardWithDoneButton({ remainingBoardsArr, submitDone }: BoardWit
               <SubmitButton
                 formAction={submitDone}
                 className="done-button"
-                pendingText="Loading..."
+                pendingText="Working..."
               >
                 Done
               </SubmitButton>
