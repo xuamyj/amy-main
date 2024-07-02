@@ -24,7 +24,7 @@ export function DayNotesSection({ currDayNoteText, currDayNoteId, labelVerb, sub
         <label htmlFor={`note_${labelVerb}`}>
           {labelVerb} note:
         </label>
-        <div>
+        <div className="flex items-start">
           <textarea 
             id={`note_${labelVerb}`} 
             name="notes"  
