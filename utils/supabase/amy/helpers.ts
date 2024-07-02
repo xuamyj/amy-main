@@ -2,6 +2,22 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { AmySupabaseClient } from "../server";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase";
 
+// --------------
+// NOT DATABASE
+// --------------
+
+export function getTodayYYYYMMDD() {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Adding 1 because months are zero-based
+  const day = String(currentDate.getDate()).padStart(2, '0');
+
+  return parseInt(`${year}${month}${day}`);
+}
+
+// --------------
+// DB: USER
+// --------------
 export async function getUserId(supabaseClient: AmySupabaseClient) {
   const {
     data: { user },
@@ -27,7 +43,9 @@ export async function getUserDisplayName(supabaseClient: AmySupabaseClient) {
   return displayName;
 }
 
-// --------
+// --------------
+// DB: BOARDS
+// --------------
 
 export async function getUserBoardsAsArray(supabaseClient: AmySupabaseClient, section: string | null = null) {
   const userId = await getUserId(supabaseClient);
@@ -61,7 +79,9 @@ export async function getUserBoardsAsRecord(supabaseClient: AmySupabaseClient, s
   return boardsRecord;
 }
 
-// --------
+// --------------
+// DB: BOARD_DAYS
+// --------------
 
 export async function getBoardDaysForBoard(supabaseClient: AmySupabaseClient, boardId: number) {
   const { data, error } = await supabaseClient
@@ -82,12 +102,7 @@ export async function getBoardDaysForDay(supabaseClient: AmySupabaseClient, dayI
 }
 
 export async function getBoardDaysForTodayAsRecord(supabaseClient: AmySupabaseClient) {
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Adding 1 because months are zero-based
-  const day = String(currentDate.getDate()).padStart(2, '0');
-
-  const dayInt = parseInt(`${year}${month}${day}`);
+  const dayInt = getTodayYYYYMMDD();
   const boardDaysArray = await getBoardDaysForDay(supabaseClient, dayInt);
 
   const boardDaysRecord : Record<string, Tables<'board_days'>> = {}; 
@@ -99,7 +114,9 @@ export async function getBoardDaysForTodayAsRecord(supabaseClient: AmySupabaseCl
   return boardDaysRecord;
 }
 
-// --------
+// --------------
+// DB: DAY_NOTES
+// --------------
 
 export async function getUserDayNotes(supabaseClient: AmySupabaseClient) {
   const userId = await getUserId(supabaseClient);
