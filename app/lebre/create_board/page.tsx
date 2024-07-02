@@ -41,7 +41,7 @@ export default async function LebreCreateBoardPage() {
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">
       <h2>Lebre: Create board</h2>
       
-      <form>
+      <form className="flex flex-wrap items-center gap-y-2">
           <label htmlFor="label_1">
             Board title: 
           </label>

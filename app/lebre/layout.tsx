@@ -17,22 +17,24 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-8 items-center">
-      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-        <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-          <div className="flex justify-start gap-3">
+    <div className="flex-1 w-full flex flex-col items-center">
+      <nav className="w-full flex justify-center border-b border-b-foreground/10">
+        <div className="w-full max-w-4xl flex flex-col justify-between items-center p-3 text-sm gap-2">
+          <div className="self-end">
+            <AuthButton />
+          </div>
+          <div className="self-start flex justify-start gap-3">
             <Link href="/lebre" className="nav-button"> Home </Link>
             <Link href="/lebre/calendar" className="nav-button"> Calendar </ Link>
-            <Link href="/lebre/create_board" className="nav-button"> Create board </ Link>
+            <Link href="/lebre/create_board" className="nav-button"> Create </ Link>
             <Link href="/lebre/settings" className="nav-button"> Settings </ Link>
           </div>
-          <AuthButton />
         </div>
       </nav>
  
       {children}
       
-      <footer className="w-full border-t border-t-foreground/10 p-4 flex justify-center text-center text-xs">
+      <footer className="w-full border-t border-t-foreground/10 p-4 flex justify-center text-center text-xs mt-6">
         <p>
           Powered by{" "}
           <a

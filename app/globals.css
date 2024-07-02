@@ -70,7 +70,6 @@
     @apply px-4;
     @apply py-2;
     @apply text-foreground;
-    @apply mb-2;
   }
 
   .done-button {
