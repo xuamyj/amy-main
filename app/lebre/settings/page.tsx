@@ -51,7 +51,7 @@ export default async function LebreSettingsPage() {
 
         <SubmitButton
           formAction={submitDisplayName}
-          className="submit-button"
+          className="flat-button submit-button"
           pendingText="Working..."
         >
           Submit

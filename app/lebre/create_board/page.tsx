@@ -58,7 +58,7 @@ export default async function LebreCreateBoardPage() {
 
         <SubmitButton
           formAction={submitCreateBoard}
-          className="submit-button"
+          className="flat-button submit-button"
           pendingText="Working..."
         >
           Submit

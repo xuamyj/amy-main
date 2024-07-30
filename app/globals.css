@@ -69,15 +69,26 @@
     @apply hover:bg-indigo-200;
   }
 
+  /* flat: can be a submit-button or gray-button */
+  .flat-button {
+    @apply text-foreground;
+    @apply px-4;
+    @apply py-2;
+    @apply rounded-md;
+    @apply no-underline;
+  }
+
   .submit-button {
     @apply bg-indigo-300;
     @apply hover:bg-indigo-400;
-    @apply rounded-md;
-    @apply px-4;
-    @apply py-2;
-    @apply text-foreground;
   }
 
+  .gray-button {
+    @apply bg-btn-background;
+    @apply hover:bg-btn-background-hover;
+  }
+
+  /* todo: can be a done-button or skip-button */
   .todo-button {
     @apply text-sm;
     @apply py-1;
