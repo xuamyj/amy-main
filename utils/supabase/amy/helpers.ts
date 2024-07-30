@@ -86,11 +86,16 @@ export async function getUserBoardsAsRecord(supabaseClient: AmySupabaseClient, s
 // DB: BOARD_DAYS
 // --------------
 
-export async function getBoardDaysForBoard(supabaseClient: AmySupabaseClient, boardId: number) {
+export async function getBoardDaysForBoard(supabaseClient: AmySupabaseClient, boardId: number, yearMonth: number) {
+  const yearMonthStart = yearMonth * 100;
+  const yearMonthEnd = (yearMonth + 1) * 100;
+
   const { data, error } = await supabaseClient
   .from('board_days')
   .select()
-  .eq('board_id', boardId);
+  .eq('board_id', boardId)
+  .gt('created_day', yearMonthStart)
+  .lt('created_day', yearMonthEnd);
 
   return data;  
 }
@@ -121,15 +126,20 @@ export async function getBoardDaysForTodayAsRecord(supabaseClient: AmySupabaseCl
 // DB: DAY_NOTES
 // --------------
 
-export async function getUserDayNotes(supabaseClient: AmySupabaseClient) {
+export async function getUserDayNotes(supabaseClient: AmySupabaseClient, yearMonth: number) {
   const userId = await getUserId(supabaseClient);
+
+  const yearMonthStart = yearMonth * 100;
+  const yearMonthEnd = (yearMonth + 1) * 100;
 
   let dayNotes = null;
   if (userId) {
     const { data, error } = await supabaseClient
     .from('day_notes')
     .select()
-    .eq('user_id', userId);
+    .eq('user_id', userId)
+    .gt('created_day', yearMonthStart)
+    .lt('created_day', yearMonthEnd);
 
     dayNotes = data;
   }

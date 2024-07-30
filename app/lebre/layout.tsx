@@ -1,5 +1,5 @@
 import AuthButton from "@/components/AuthButton";
-import { getUserId } from "@/utils/supabase/amy/helpers";
+import { getTodayYYYYMMDD, getUserId } from "@/utils/supabase/amy/helpers";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -16,6 +16,9 @@ export default async function ProtectedLayout({
     return redirect("/login");
   }
 
+  const yearMonthDay = getTodayYYYYMMDD();
+  const yearMonth = Math.floor(yearMonthDay/100);
+
   return (
     <div className="flex-1 w-full flex flex-col items-center">
       <nav className="w-full flex justify-center border-b border-b-foreground/10">
@@ -25,7 +28,7 @@ export default async function ProtectedLayout({
           </div>
           <div className="self-start flex justify-start gap-3">
             <Link href="/lebre" className="nav-button"> Home </Link>
-            <Link href="/lebre/calendar" className="nav-button"> Calendar </ Link>
+            <Link href={`/lebre/calendar/${yearMonth}`} className="nav-button"> Calendar </ Link>
             <Link href="/lebre/create_board" className="nav-button"> Create </ Link>
             <Link href="/lebre/settings" className="nav-button"> Settings </ Link>
           </div>
