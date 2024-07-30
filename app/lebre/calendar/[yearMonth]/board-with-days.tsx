@@ -13,8 +13,6 @@ interface BoardWithDaysProps {
 export function BoardWithDays({ boardDayTuples }: BoardWithDaysProps) {
   const [shouldShowSkipped, setShouldShowSkipped] = useAtom(shouldShowSkippedAtom);
 
-  // console.log('Inside BoardWithDays, shouldShowSkipped is', shouldShowSkipped);
-
   return (
     <div>
       {boardDayTuples && boardDayTuples.map(boardDayTuple => (
@@ -23,13 +21,17 @@ export function BoardWithDays({ boardDayTuples }: BoardWithDaysProps) {
 
         {boardDayTuple[1] &&
         <ul>
-          {boardDayTuple[1].map(boardDay => (
-          <li key={`boardDay-${boardDay.id}`}>
-            {boardDay.created_day} : {String(boardDay.done)} {boardDay.notes && 
-            <span>: {boardDay.notes}</span>
+          {boardDayTuple[1].map(boardDay => {
+            if (shouldShowSkipped || boardDay.done) {
+              return (
+                <li key={`boardDay-${boardDay.id}`}>
+                  {boardDay.created_day} : {String(boardDay.done)} {boardDay.notes && 
+                  <span>: {boardDay.notes}</span>
+                  }
+                </li>
+              )
             }
-          </li>
-          ))}
+          })}
         </ul>
         }
       </div>
