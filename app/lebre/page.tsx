@@ -5,6 +5,7 @@ import { TablesInsert } from "@/types/supabase";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "../login/submit-button";
 import { DayNotesSection } from "./daynotes-section";
+import { DotDotDotMenu } from "./dotdotdot-menu";
 
 function formatDayNoteForSupabase(formData: FormData, userId: string) {
   // Convert FormData to a JavaScript object
@@ -25,7 +26,7 @@ export default async function LebreHomePage() {
   const dayNotes = await getDayNotesForToday(supabase);
 
   // console.log('getUserBoardsAsArray', boards);
-  console.log('getBoardDaysForTodayAsRecord', boardDays);
+  // console.log('getBoardDaysForTodayAsRecord', boardDays);
   // console.log('\n')
 
   let currDayNoteText: string | null = null;
@@ -86,7 +87,7 @@ export default async function LebreHomePage() {
     }
     formObject['created_day'] = getTodayYYYYMMDD();
     formObject['done'] = true;
-    console.log(formObject);
+    console.log('submitDone():', formObject);
 
     if (userId) {
       const { error } = await supabaseDB
@@ -115,7 +116,7 @@ export default async function LebreHomePage() {
     }
     formObject['created_day'] = getTodayYYYYMMDD();
     formObject['done'] = false;
-    console.log(formObject);
+    console.log('submitSkip():', formObject);
 
     if (userId) {
       const { error } = await supabaseDB
@@ -126,6 +127,34 @@ export default async function LebreHomePage() {
         console.error('Error inserting data:', error);
       } else {
         console.log('Data inserted successfully');
+        return redirect("/lebre");
+      }
+    }
+  }
+
+  const submitDelete = async (formData: FormData) => {
+    "use server";
+
+    const supabaseDB = createClient();
+    const userId = await getUserId(supabaseDB);
+
+    // Convert FormData to a JavaScript object
+    const formObject: { [key: string]: any } = {};
+    for (const [key, value] of Array.from(formData.entries())) {
+      formObject[key] = value;
+    }
+    console.log('submitDelete()', formObject);
+
+    if (userId) {
+      const { error } = await supabaseDB
+      .from('board_days')
+      .delete()
+      .eq('id', formObject['id']);
+
+      if (error) {
+        console.error('Error deleting data:', error);
+      } else {
+        console.log('Data deleted successfully');
         return redirect("/lebre");
       }
     }
@@ -162,7 +191,7 @@ export default async function LebreHomePage() {
 
     if (userId) {
       const formObject = formatDayNoteForSupabase(formData, userId);
-      console.log('createDayNote():', formObject);
+      console.log('updateDayNote():', formObject);
 
       const { error } = await supabaseDB
       .from('day_notes')
@@ -170,9 +199,9 @@ export default async function LebreHomePage() {
       .eq('id', formObject['id']);
 
       if (error) {
-        console.error('Error inserting data:', error);
+        console.error('Error updating data:', error);
       } else {
-        console.log('Data inserted successfully');
+        console.log('Data updated successfully');
         return redirect("/lebre");
       }
     }
@@ -184,7 +213,12 @@ export default async function LebreHomePage() {
 
       {doneBoardDaysArr.map(item => (
         <div key={`boardDay-${item.boardDayId}`}>
-        <h3>{item.boardTitle}</h3>
+
+        <div className="flex">
+          <h3>{item.boardTitle}</h3> 
+          <DotDotDotMenu boardDayId={item.boardDayId} submitDelete={submitDelete} />
+        </div>
+        
         {item.notes && <p>{item.notes}</p>} 
         {!item.notes && <p>--</p>}
         </div>
@@ -222,7 +256,12 @@ export default async function LebreHomePage() {
 
       {skipBoardDaysArr.map(item => (
         <div key={`boardDay-${item.boardDayId}`}>
-        <h3>{item.boardTitle}</h3>
+
+        <div className="flex">
+          <h3>{item.boardTitle}</h3> 
+          <DotDotDotMenu boardDayId={item.boardDayId} submitDelete={submitDelete} />
+        </div>
+
         {item.notes && <p>{item.notes}</p>} 
         {!item.notes && <p>--</p>}
         </div>
