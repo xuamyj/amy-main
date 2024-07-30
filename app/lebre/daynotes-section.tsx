@@ -40,7 +40,7 @@ export function DayNotesSection({ currDayNoteText, currDayNoteId, labelVerb, sub
           }
           <SubmitButton
             formAction={submitFunction}
-            className="done-button"
+            className="todo-button done-button-colors"
             pendingText="Working..."
           >
             Save note

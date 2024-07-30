@@ -72,16 +72,26 @@
     @apply text-foreground;
   }
 
-  .done-button {
+  .todo-button {
     @apply text-sm;
     @apply py-1;
     @apply px-2;
     @apply rounded-md;
     @apply no-underline;
     @apply border-2;
+    @apply mr-2;
+  }
+
+  .done-button-colors {
     @apply border-amber-400;
     @apply text-amber-400;
     @apply hover:bg-amber-100;
+  }
+
+  .skip-button-colors {
+    @apply border-neutral-300;
+    @apply text-neutral-300;
+    @apply hover:bg-neutral-100;
   }
 
   .done-input {

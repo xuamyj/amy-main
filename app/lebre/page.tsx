@@ -25,7 +25,7 @@ export default async function LebreHomePage() {
   const dayNotes = await getDayNotesForToday(supabase);
 
   // console.log('getUserBoardsAsArray', boards);
-  // console.log('getBoardDaysForTodayAsRecord', boardDays);
+  console.log('getBoardDaysForTodayAsRecord', boardDays);
   // console.log('\n')
 
   let currDayNoteText: string | null = null;
@@ -37,6 +37,7 @@ export default async function LebreHomePage() {
   }
 
   let doneBoardDaysArr: {boardDayId: number, boardTitle: string; notes: string | null}[] = [];
+  let skipBoardDaysArr: {boardDayId: number, boardTitle: string; notes: string | null}[] = [];
   let remainingBoardsArrA: {boardId: number, boardTitle: string}[] = [];
   let remainingBoardsArrB: {boardId: number, boardTitle: string}[] = [];
 
@@ -44,18 +45,24 @@ export default async function LebreHomePage() {
     for (const board of boards) {
       const boardId = board.id;
 
-      if (board.id in boardDays) {
+      if (board.id in boardDays && boardDays[boardId].done) { // marked done
         doneBoardDaysArr.push({
           boardDayId: boardDays[boardId].id,
           boardTitle: board.board_title, 
           notes: boardDays[boardId].notes
         });
-      } else if (board.section == 'A') {
+      } else if (board.id in boardDays && (boardDays[boardId].done === false)) { // marked skip
+        skipBoardDaysArr.push({
+          boardDayId: boardDays[boardId].id,
+          boardTitle: board.board_title, 
+          notes: boardDays[boardId].notes
+        });
+      } else if (board.section == 'A') { // not marked; A
         remainingBoardsArrA.push({
           boardId: boardId, 
           boardTitle: board.board_title, 
         });
-      } else if (board.section == 'B') {
+      } else if (board.section == 'B') { // not marked; B
         remainingBoardsArrB.push({
           boardId: boardId, 
           boardTitle: board.board_title, 
@@ -79,6 +86,35 @@ export default async function LebreHomePage() {
     }
     formObject['created_day'] = getTodayYYYYMMDD();
     formObject['done'] = true;
+    console.log(formObject);
+
+    if (userId) {
+      const { error } = await supabaseDB
+      .from('board_days')
+      .insert(formObject as TablesInsert<'board_days'>); // todo: is this right? 
+
+      if (error) {
+        console.error('Error inserting data:', error);
+      } else {
+        console.log('Data inserted successfully');
+        return redirect("/lebre");
+      }
+    }
+  }
+
+  const submitSkip = async (formData: FormData) => {
+    "use server";
+
+    const supabaseDB = createClient();
+    const userId = await getUserId(supabaseDB);
+
+    // Convert FormData to a JavaScript object
+    const formObject: { [key: string]: any } = {};
+    for (const [key, value] of Array.from(formData.entries())) {
+      formObject[key] = value;
+    }
+    formObject['created_day'] = getTodayYYYYMMDD();
+    formObject['done'] = false;
     console.log(formObject);
 
     if (userId) {
@@ -156,11 +192,11 @@ export default async function LebreHomePage() {
      
       <h2>Lebre: Add things to today</h2>
 
-      <BoardWithDoneButton remainingBoardsArr={remainingBoardsArrA} submitDone={submitDone}/>
+      <BoardWithDoneButton remainingBoardsArr={remainingBoardsArrA} submitDone={submitDone} submitSkip={submitSkip}/>
         
       <div className="divider"></div>
 
-      <BoardWithDoneButton remainingBoardsArr={remainingBoardsArrB} submitDone={submitDone}/>
+      <BoardWithDoneButton remainingBoardsArr={remainingBoardsArrB} submitDone={submitDone} submitSkip={submitSkip}/>
 
       <div className="divider"></div>
 
@@ -181,6 +217,17 @@ export default async function LebreHomePage() {
           submitFunction={createDayNote} 
         /> 
       }
+
+      <h2>Lebre: Skipped today</h2>
+
+      {skipBoardDaysArr.map(item => (
+        <div key={`boardDay-${item.boardDayId}`}>
+        <h3>{item.boardTitle}</h3>
+        {item.notes && <p>{item.notes}</p>} 
+        {!item.notes && <p>--</p>}
+        </div>
+      ))}
+
     </div>
   );
 }

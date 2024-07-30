@@ -8,9 +8,10 @@ import { SubmitButton } from '../login/submit-button';
 interface BoardWithDoneButtonProps {
   remainingBoardsArr: {boardId: number, boardTitle: string}[];
   submitDone: (formData: FormData)=>Promise<void>;
+  submitSkip: (formData: FormData)=>Promise<void>;
 }
 
-export function BoardWithDoneButton({ remainingBoardsArr, submitDone }: BoardWithDoneButtonProps) {
+export function BoardWithDoneButton({ remainingBoardsArr, submitDone, submitSkip }: BoardWithDoneButtonProps) {
   // const [isSomething, setSomething] = useAtom(isSomethingAtom);
 
   return (
@@ -34,10 +35,17 @@ export function BoardWithDoneButton({ remainingBoardsArr, submitDone }: BoardWit
               />
               <SubmitButton
                 formAction={submitDone}
-                className="done-button"
+                className="todo-button done-button-colors"
                 pendingText="Working..."
               >
                 Done
+              </SubmitButton>
+              <SubmitButton
+                formAction={submitSkip}
+                className="todo-button skip-button-colors"
+                pendingText="Working..."
+              >
+                Skip
               </SubmitButton>
             </div>
           </form>
