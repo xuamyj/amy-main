@@ -1,7 +1,8 @@
 "use client";
 
 import { Tables } from '@/types/supabase';
-// import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
+import { shouldShowSkippedAtom } from './calendar-filters';
 
 // const isSomethingAtom = atom(false);
 
@@ -10,7 +11,9 @@ interface BoardWithDaysProps {
 }
 
 export function BoardWithDays({ boardDayTuples }: BoardWithDaysProps) {
-  // const [isSomething, setSomething] = useAtom(isSomethingAtom);
+  const [shouldShowSkipped, setShouldShowSkipped] = useAtom(shouldShowSkippedAtom);
+
+  // console.log('Inside BoardWithDays, shouldShowSkipped is', shouldShowSkipped);
 
   return (
     <div>

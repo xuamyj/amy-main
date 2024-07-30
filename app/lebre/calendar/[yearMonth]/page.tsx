@@ -2,6 +2,7 @@ import { getBoardDaysForBoard, getUserBoardsAsArray, getUserDayNotes } from "@/u
 import { createClient } from "@/utils/supabase/server";
 import { BoardWithDays } from "./board-with-days";
 import { Tables } from "@/types/supabase";
+import { CalendarFilters } from "./calendar-filters";
 
 export default async function LebreCalendarPage({ params }: { params: { yearMonth: string } }) {
   const yearMonthInt = parseInt(params.yearMonth);
@@ -27,6 +28,8 @@ export default async function LebreCalendarPage({ params }: { params: { yearMont
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">
       <h2>Lebre: All boards</h2>
+
+      <CalendarFilters/>
 
       <BoardWithDays boardDayTuples={boardDayTuplesA}/>
 

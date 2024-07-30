@@ -39,6 +39,12 @@
     @apply px-2;
   }
 
+  input[type="checkbox"] {
+    margin-right: 8px;
+    @apply h-4;
+    @apply w-4;
+  }
+
   .label-like-h3 {
     @apply font-bold;
     @apply text-xl;
