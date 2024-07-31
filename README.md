@@ -1,11 +1,11 @@
 ## Todo
 
-- create (+ delete) board
-- today's done (+ delete)
+- edit board
+- home: show the date
+- calendar: show the month
+- special single-board page
 
-- make auth button look ok on mobile
 - foreground background ?
-
 - lebre/calendar/page.tsx: 
     const boardsA = await getUserBoardsAsArray(supabase, 'A');
     const boardsB = await getUserBoardsAsArray(supabase, 'B');

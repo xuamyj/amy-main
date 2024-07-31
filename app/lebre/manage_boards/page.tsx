@@ -32,14 +32,14 @@ export default async function LebreCreateBoardPage() {
         console.error('Error inserting data:', error);
       } else {
         console.log('Data inserted successfully');
-        return redirect("/lebre/create_board");
+        return redirect("/lebre/manage_boards");
       }
     }
   }
 
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">
-      <h2>Lebre: Create board</h2>
+      <h2>Lebre: Add board</h2>
       
       <form className="flex flex-wrap items-center gap-y-2">
           <label htmlFor="label_1">

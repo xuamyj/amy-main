@@ -29,7 +29,7 @@ export default async function ProtectedLayout({
           <div className="self-start flex justify-start gap-3">
             <Link href="/lebre" className="nav-button"> Home </Link>
             <Link href={`/lebre/calendar/${yearMonth}`} className="nav-button"> Calendar </ Link>
-            <Link href="/lebre/create_board" className="nav-button"> Create </ Link>
+            <Link href="/lebre/manage_boards" className="nav-button"> Add/Edit Boards </ Link>
             <Link href="/lebre/settings" className="nav-button"> Settings </ Link>
           </div>
         </div>
