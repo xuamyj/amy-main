@@ -22,7 +22,9 @@
     @apply list-disc;
   }
 
-  input, textarea {
+  input, textarea, select {
+    @apply bg-background;
+    
     @apply rounded-none;
     @apply py-1;
     @apply px-2;
@@ -32,11 +34,6 @@
     @apply outline-btn-background;
     @apply focus:outline-2;
     @apply focus:outline-btn-background-hover;
-  }
-
-  select {
-    @apply py-1;
-    @apply px-2;
   }
 
   input[type="checkbox"] {

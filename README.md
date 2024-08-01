@@ -1,9 +1,14 @@
 ## Todo
 
+- dark mode text is white (also figure out how to swap on comp)
 - edit board
+  - archive/hide board
+  - reorder existing boards
+  - add board title: auto clear after submit
+- special single-board page
+
 - home: show the date
 - calendar: show the month
-- special single-board page
 
 - foreground background ?
 - lebre/calendar/page.tsx: 
