@@ -1,5 +1,5 @@
 import AuthButton from "@/components/AuthButton";
-import { getTodayYYYYMMDD, getUserId } from "@/utils/supabase/amy/helpers";
+import { getThisMonthYYYYMM, getUserId } from "@/utils/supabase/amy/helpers";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -16,8 +16,7 @@ export default async function ProtectedLayout({
     return redirect("/login");
   }
 
-  const yearMonthDay = getTodayYYYYMMDD();
-  const yearMonth = Math.floor(yearMonthDay/100);
+  const yearMonth = getThisMonthYYYYMM();
 
   return (
     <div className="flex-1 w-full flex flex-col items-center">

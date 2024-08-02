@@ -2,8 +2,8 @@
 
 - dark mode text is white (also figure out how to swap on comp)
 - edit board
-  - archive/hide board
-  - reorder existing boards
+  - archive/hide board [hide: true. normal: false]
+  - reorder existing boards [once you click: add number]
   - add board title: auto clear after submit
 - special single-board page
 

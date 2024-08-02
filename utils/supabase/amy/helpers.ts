@@ -18,9 +18,15 @@ export function getTodayYYYYMMDD() {
   return parseInt(`${year}${month}${day}`);
 }
 
+export function getThisMonthYYYYMM() {
+  const yearMonthDay = getTodayYYYYMMDD();
+  return Math.floor(yearMonthDay/100);
+}
+
 // --------------
 // DB: USER
 // --------------
+
 export async function getUserId(supabaseClient: AmySupabaseClient) {
   const {
     data: { user },
@@ -49,6 +55,15 @@ export async function getUserDisplayName(supabaseClient: AmySupabaseClient) {
 // --------------
 // DB: BOARDS
 // --------------
+
+export async function getBoard(supabaseClient: AmySupabaseClient, boardId: number) {
+  const { data, error } = await supabaseClient
+  .from('boards')
+  .select()
+  .eq('id', boardId);
+
+  return data;
+}
 
 export async function getUserBoardsAsArray(supabaseClient: AmySupabaseClient, section: string | null = null) {
   const userId = await getUserId(supabaseClient);

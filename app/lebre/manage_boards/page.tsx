@@ -3,6 +3,7 @@ import { getUserBoardsAsArray, getUserId } from "@/utils/supabase/amy/helpers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Tables, TablesInsert } from "@/types/supabase";
+import Link from "next/link";
 
 
 export default async function LebreCreateBoardPage() {
@@ -70,8 +71,20 @@ export default async function LebreCreateBoardPage() {
       {boards && 
       <ul>
         {boards.map(board => (
-        <li key={board.id}> 
-          {board.board_title} : {board.section}
+        <li key={board.id} className="mt-3"> 
+          {board.board_title} : {board.section} -- 
+          <Link
+            href={`/lebre/board/${board.id}`}
+            className="todo-button purple-button-colors"
+          >
+            View
+          </Link>
+          <Link
+            href={`/lebre/edit_board/${board.id}`}
+            className="todo-button skip-button-colors"
+          >
+            Edit
+          </Link>
         </li>
         ))}
       </ul>
