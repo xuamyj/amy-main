@@ -6,10 +6,16 @@ import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase";
 // NOT DATABASE
 // --------------
 
-export function getTodayYYYYMMDD() {
+export const DAY_NAMES = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]; 
+
+export function getTodayPST() {
   const options = { timeZone: 'America/Los_Angeles' };
   const rawDate = new Date().toLocaleString('en-US', options);
-  const currentDate = new Date(rawDate);
+  return new Date(rawDate);
+}
+
+export function getTodayYYYYMMDD() {
+  const currentDate = getTodayPST();
 
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Adding 1 because months are zero-based
@@ -50,6 +56,23 @@ export async function getUserDisplayName(supabaseClient: AmySupabaseClient) {
     }
   }
   return displayName;
+}
+
+export async function getUserStartWeekday(supabaseClient: AmySupabaseClient) {
+  const userId = await getUserId(supabaseClient);
+
+  let startWeekday : number|null = null;
+  if (userId) {
+    const { data, error } = await supabaseClient
+    .from('user_info')
+    .select()
+    .eq('id', userId);
+
+    if (data && data.length > 0) {
+      startWeekday = data[0].start_weekday;
+    }
+  }
+  return startWeekday;
 }
 
 // --------------

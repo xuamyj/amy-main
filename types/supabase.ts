@@ -115,14 +115,17 @@ export type Database = {
         Row: {
           display_name: string | null
           id: string
+          start_weekday: number
         }
         Insert: {
           display_name?: string | null
           id: string
+          start_weekday?: number
         }
         Update: {
           display_name?: string | null
           id?: string
+          start_weekday?: number
         }
         Relationships: [
           {
