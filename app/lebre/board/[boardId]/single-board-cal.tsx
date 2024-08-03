@@ -49,7 +49,6 @@ export function SingleBoardCal({ board, boardDays, startWeekday }: SingleBoardCa
         dayNumber: day
       }
     }
-
     return result;
 
   }, []);
@@ -59,27 +58,46 @@ export function SingleBoardCal({ board, boardDays, startWeekday }: SingleBoardCa
 
   return (
     <div>
-      <p>
-        startWeekday: {startWeekday}
-      </p>
-
       <h3>
         {monthStr}
       </h3>
-      <div className="flex">
-      {
-        DAY_NAMES.map((_, index) => {
-          const squareToDay = (index+startWeekday+7)%7;
-          return (<div className="border px-4 py-3">
-            {DAY_NAMES[squareToDay]}
-          </div>);
-        })
-      }
-      </div>
 
-      <p>
+      {/* <p>
         {monthNumDays} days in the month, starting on a {monthStartWeekday}
-      </p>
+      </p> */}
+
+      <div className='border'>
+        <div className="flex-1 flex items-stretch ">
+        {
+          DAY_NAMES.map((_, index) => {
+            const squareToDay = (index+startWeekday+7)%7;
+            return (<div className="calendar-child-h12 content-end">
+              <strong>{DAY_NAMES[squareToDay]}</strong>
+            </div>);
+          })
+        }
+        </div>
+
+        <div className="w-full flex flex-col items-stretch">
+        {
+          calendar2DArr.map(weekArray => (
+            <div className="flex-1 flex  items-stretch">
+            {
+              weekArray.map((singleCalSquare) => {
+                if (singleCalSquare === null) {
+                  return (<div className="calendar-child-h12"></div>)
+                }
+
+                return (<div className="calendar-child-h12">
+                  {singleCalSquare.dayNumber}
+                </div>);
+              })
+            }
+            </div>
+          ))
+        }
+        </div>
+      </div>
       
     </div>
   );

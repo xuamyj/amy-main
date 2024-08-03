@@ -2,9 +2,10 @@
 
 - dark mode text is white (also figure out how to swap on comp)
 - edit board
+  - edit name and section ofc
   - archive/hide board [hide: true. normal: false]
   - reorder existing boards [once you click: add number]
-  - add board title: auto clear after submit
+  - add board title: auto clear after submit <-
 - special single-board page
 
 - home: show the date
@@ -16,6 +17,11 @@
     const boardsB = await getUserBoardsAsArray(supabase, 'B');
   start promises at the same time? (and same with the pair after)
 - one day might need more sections / rearrange boards within sections? 
+
+formAction={(formData) => {
+            submitCreateBoard(formData);
+            
+          }}
 
 ---
 

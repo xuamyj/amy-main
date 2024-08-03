@@ -1,6 +1,6 @@
 import { getBoard, getBoardDaysForBoard, getThisMonthYYYYMM, getUserStartWeekday } from "@/utils/supabase/amy/helpers";
 import { createClient } from "@/utils/supabase/server";
-import { SingleBoardCal } from "../single-board-cal";
+import { SingleBoardCal } from "./single-board-cal";
 
 export default async function LebreViewBoardPage({ params }: { params: { boardId: string } }) {
   const boardIdInt = parseInt(params.boardId);

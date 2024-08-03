@@ -122,6 +122,14 @@
     @apply mr-2;
   }
 
+  .calendar-child-h12 {
+    @apply border;
+    @apply flex-1;
+    @apply h-12;
+
+    @apply p-1;
+  }
+
   :root {
     --background: 200 20% 98%;
     --btn-background: 200 10% 91%;
