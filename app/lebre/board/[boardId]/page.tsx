@@ -21,10 +21,6 @@ export default async function LebreViewBoardPage({ params }: { params: { boardId
     throw "LebreViewBoardPage: Invalid `startWeekday`"
   }
 
-  console.log('board', board);
-  console.log('boardDays', boardDays);
-  console.log('startWeekday', startWeekday);
-
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">
       <h2>Lebre: "{board.board_title}"</h2>

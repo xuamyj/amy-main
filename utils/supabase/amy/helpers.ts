@@ -29,7 +29,7 @@ export function getThisMonthYYYYMM() {
   return Math.floor(yearMonthDay/100);
 }
 
-export function mapBoardIdAsRecord(thingArr: any[], findIdFunc) {
+export function mapBoardIdAsRecord(thingArr: any[], findIdFunc: (unnamedArg: any) => string) {
   const map: Record<string, any> = {};
   for (const thing of thingArr) {
     const id = String(findIdFunc(thing));
@@ -95,10 +95,11 @@ export async function getUserBoardsOrdering(supabaseClient: AmySupabaseClient, b
     .eq('id', userId);
 
     if (data && data.length > 0) {
-      if (data[0].boards_ordering && data[0].boards_ordering[boardsSection]) {
-        result = data[0].boards_ordering[boardsSection];
+      // stored json! gasp
+      const boardsOrderingJson: any | null = data[0].boards_ordering
+      if (boardsOrderingJson && boardsOrderingJson[boardsSection]) {
+        result = boardsOrderingJson[boardsSection];
       }
-      
     }
   }
   return result;
@@ -122,8 +123,6 @@ export async function getUserBoardsAsArray(supabaseClient: AmySupabaseClient, se
 
   const resultA = await getUserBoardsOrdering(supabaseClient, 'A');
   const resultB = await getUserBoardsOrdering(supabaseClient, 'B');
-  console.log('resultA', resultA);
-  console.log('resultB', resultB);
 
   let boards = null;
   if (userId) {

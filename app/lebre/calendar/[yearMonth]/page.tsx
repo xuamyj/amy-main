@@ -4,6 +4,11 @@ import { BoardWithDays } from "./board-with-days";
 import { Tables } from "@/types/supabase";
 import { CalendarFilters } from "./calendar-filters";
 
+type QuickBoardTuples = [
+  Tables<'boards'>,
+  Tables<'board_days'>[],
+]
+
 export default async function LebreCalendarPage({ params }: { params: { yearMonth: string } }) {
   const yearMonthInt = parseInt(params.yearMonth);
 
@@ -13,14 +18,14 @@ export default async function LebreCalendarPage({ params }: { params: { yearMont
   async function getTuplesFromBoards(boards: Tables<'boards'>[] | null) {
     const boardDayPromises = boards?.map(async function(board) {
       const boardDays = await getBoardDaysForBoard(supabase, board.id, yearMonthInt);
-      return [board, boardDays] as const;
+      return [board, boardDays] as QuickBoardTuples;
     }) || [];
     const boardDayTuples = await Promise.all(boardDayPromises);
 
     return boardDayTuples;
   }
 
-  async function filterSortTuplesInSection(supabase: AmySupabaseClient, tuples, section: string) {
+  async function filterSortTuplesInSection(supabase: AmySupabaseClient, tuples: QuickBoardTuples[], section: string) {
     const boardsOrdering = await getUserBoardsOrdering(supabase, section);
     if (!boardsOrdering) { 
       return tuples;
@@ -39,8 +44,8 @@ export default async function LebreCalendarPage({ params }: { params: { yearMont
   const boards = await getUserBoardsAsArray(supabase);
   const boardDayTuples = await getTuplesFromBoards(boards);
 
-  let boardDayTuplesA = [];
-  let boardDayTuplesB = [];
+  let boardDayTuplesA: QuickBoardTuples[] = [];
+  let boardDayTuplesB: QuickBoardTuples[] = [];
 
   // filter and sort
   if (boards) {

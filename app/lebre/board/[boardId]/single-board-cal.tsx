@@ -53,9 +53,6 @@ export function SingleBoardCal({ board, boardDays, startWeekday }: SingleBoardCa
 
   }, []);
 
-  console.log(calendar2DArr);
-  console.log(JSON.stringify(calendar2DArr, undefined, 2))
-
   return (
     <div>
       <h3>
@@ -67,29 +64,44 @@ export function SingleBoardCal({ board, boardDays, startWeekday }: SingleBoardCa
       </p> */}
 
       <div className='border'>
+        {/* Row: Su Mo Tu ... */}
         <div className="flex-1 flex items-stretch ">
         {
           DAY_NAMES.map((_, index) => {
             const squareToDay = (index+startWeekday+7)%7;
-            return (<div className="calendar-child-h12 content-end">
+            return (<div 
+              className="calendar-child-h12 content-end" 
+              key={`dayName-${squareToDay}`}
+            >
               <strong>{DAY_NAMES[squareToDay]}</strong>
             </div>);
           })
         }
         </div>
 
+        {/* Grid with dates */}
         <div className="w-full flex flex-col items-stretch">
         {
-          calendar2DArr.map(weekArray => (
-            <div className="flex-1 flex  items-stretch">
-            {
-              weekArray.map((singleCalSquare) => {
-                if (singleCalSquare === null) {
-                  return (<div className="calendar-child-h12"></div>)
-                }
+          calendar2DArr.map((weekArray, index) => (
 
-                return (<div className="calendar-child-h12">
+            // Row: 4 5 6 ... 
+            <div className="flex-1 flex  items-stretch" key={`row-${index}`}>
+            {
+              weekArray.map((singleCalSquare, index) => {
+
+                // Date: 4
+                if (singleCalSquare === null) {
+                  return (<div className="calendar-child-h12" key={`box-${index}`}></div>)
+                }
+                return (<div 
+                  className="calendar-child-h12" 
+                  key={`dayNumber-${singleCalSquare.dayNumber}`}
+                >
                   {singleCalSquare.dayNumber}
+                  <div>
+                    <div className="h-2 w-2 bg-indigo-300"></div>
+                    <div className="h-2 w-2 bg-amber-300"></div>
+                  </div>
                 </div>);
               })
             }

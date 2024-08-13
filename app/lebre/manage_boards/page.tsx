@@ -52,8 +52,8 @@ export default async function LebreCreateBoardPage() {
           <label htmlFor="label_2">
             Section: 
           </label>
-          <select name="section" id="label_2" className="mx-2">
-            <option value="A" selected>A (default)</option>
+          <select name="section" id="label_2" className="mx-2" defaultValue="A">
+            <option value="A">A (default)</option>
             <option value="B">B</option>
           </select>
 

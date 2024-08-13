@@ -19,6 +19,11 @@ function formatDayNoteForSupabase(formData: FormData, userId: string) {
   return formObject;
 }
 
+type QuickBoardInfo = {
+  boardId: number;
+  boardTitle: string;
+}
+
 export default async function LebreHomePage() {
   const supabase = createClient();
   const dayNotes = await getDayNotesForToday(supabase);
@@ -31,7 +36,7 @@ export default async function LebreHomePage() {
     currDayNoteId = dayNotes[0].id;
   }
 
-  async function filterSortBoardsInSection(supabase: AmySupabaseClient, boards, section: string) {
+  async function filterSortBoardsInSection(supabase: AmySupabaseClient, boards: QuickBoardInfo[], section: string) {
     const boardsOrdering = await getUserBoardsOrdering(supabase, section);
     if (!boardsOrdering) {
       return boards;
