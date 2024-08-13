@@ -29,6 +29,15 @@ export function getThisMonthYYYYMM() {
   return Math.floor(yearMonthDay/100);
 }
 
+export function mapBoardIdAsRecord(thingArr: any[], findIdFunc) {
+  const map: Record<string, any> = {};
+  for (const thing of thingArr) {
+    const id = String(findIdFunc(thing));
+    map[id] = thing;
+  }
+  return map;
+}
+
 // --------------
 // DB: USER
 // --------------
@@ -75,6 +84,26 @@ export async function getUserStartWeekday(supabaseClient: AmySupabaseClient) {
   return startWeekday;
 }
 
+export async function getUserBoardsOrdering(supabaseClient: AmySupabaseClient, boardsSection: string) {
+  const userId = await getUserId(supabaseClient);
+
+  let result : Array<number>|null = null;
+  if (userId) {
+    const { data, error } = await supabaseClient
+    .from('user_info')
+    .select()
+    .eq('id', userId);
+
+    if (data && data.length > 0) {
+      if (data[0].boards_ordering && data[0].boards_ordering[boardsSection]) {
+        result = data[0].boards_ordering[boardsSection];
+      }
+      
+    }
+  }
+  return result;
+}
+
 // --------------
 // DB: BOARDS
 // --------------
@@ -91,6 +120,11 @@ export async function getBoard(supabaseClient: AmySupabaseClient, boardId: numbe
 export async function getUserBoardsAsArray(supabaseClient: AmySupabaseClient, section: string | null = null) {
   const userId = await getUserId(supabaseClient);
 
+  const resultA = await getUserBoardsOrdering(supabaseClient, 'A');
+  const resultB = await getUserBoardsOrdering(supabaseClient, 'B');
+  console.log('resultA', resultA);
+  console.log('resultB', resultB);
+
   let boards = null;
   if (userId) {
     let asyncSupabaseCall = supabaseClient
@@ -106,18 +140,6 @@ export async function getUserBoardsAsArray(supabaseClient: AmySupabaseClient, se
     boards = data;
   }
   return boards;
-}
-
-export async function getUserBoardsAsRecord(supabaseClient: AmySupabaseClient, section: string | null = null) {
-  const boardsArray = await getUserBoardsAsArray(supabaseClient, section);
-
-  const boardsRecord : Record<string, Tables<'boards'>> = {}; 
-  if (boardsArray) {
-    for (const board of boardsArray) {
-      boardsRecord[board.id] = board;
-    }
-  } 
-  return boardsRecord;
 }
 
 // --------------

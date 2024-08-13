@@ -1,4 +1,4 @@
-import { getBoardDaysForTodayAsRecord, getDayNotesForToday, getTodayYYYYMMDD, getUserBoardsAsArray, getUserId } from "@/utils/supabase/amy/helpers";
+import { getBoardDaysForTodayAsRecord, getDayNotesForToday, getTodayYYYYMMDD, getUserBoardsAsArray, getUserBoardsOrdering, getUserId, mapBoardIdAsRecord } from "@/utils/supabase/amy/helpers";
 import { AmySupabaseClient, createClient } from "@/utils/supabase/server";
 import { BoardWithDoneButton } from "./board-with-donebutton";
 import { TablesInsert } from "@/types/supabase";
@@ -21,13 +21,7 @@ function formatDayNoteForSupabase(formData: FormData, userId: string) {
 
 export default async function LebreHomePage() {
   const supabase = createClient();
-  const boards = await getUserBoardsAsArray(supabase);
-  const boardDays = await getBoardDaysForTodayAsRecord(supabase);
   const dayNotes = await getDayNotesForToday(supabase);
-
-  // console.log('getUserBoardsAsArray', boards);
-  // console.log('getBoardDaysForTodayAsRecord', boardDays);
-  // console.log('\n')
 
   let currDayNoteText: string | null = null;
   let currDayNoteId: number | null = null;
@@ -36,6 +30,25 @@ export default async function LebreHomePage() {
     currDayNoteText = dayNotes[0].notes;
     currDayNoteId = dayNotes[0].id;
   }
+
+  async function filterSortBoardsInSection(supabase: AmySupabaseClient, boards, section: string) {
+    const boardsOrdering = await getUserBoardsOrdering(supabase, section);
+    if (!boardsOrdering) {
+      return boards;
+    }
+
+    const map = mapBoardIdAsRecord(boards, (board) => {
+      return board.boardId
+    });
+    const resultArr = [];
+    for (const id of boardsOrdering) {
+      resultArr.push(map[id]);
+    }
+    return resultArr;
+  }
+
+  const boards = await getUserBoardsAsArray(supabase);
+  const boardDays = await getBoardDaysForTodayAsRecord(supabase);
 
   let doneBoardDaysArr: {boardDayId: number, boardTitle: string; notes: string | null}[] = [];
   let skipBoardDaysArr: {boardDayId: number, boardTitle: string; notes: string | null}[] = [];
@@ -73,6 +86,12 @@ export default async function LebreHomePage() {
       }
     }
   }
+  remainingBoardsArrA = await filterSortBoardsInSection(supabase, remainingBoardsArrA, 'A');
+  remainingBoardsArrB = await filterSortBoardsInSection(supabase, remainingBoardsArrB, 'B');
+
+  // ------------------
+  // "button" functions
+  // ------------------
 
   const submitDone = async (formData: FormData) => {
     "use server";
@@ -206,6 +225,10 @@ export default async function LebreHomePage() {
       }
     }
   }
+
+  // ------------------
+  // jsx display
+  // ------------------
 
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">

@@ -1,5 +1,5 @@
-import { getBoardDaysForBoard, getUserBoardsAsArray, getUserDayNotes } from "@/utils/supabase/amy/helpers";
-import { createClient } from "@/utils/supabase/server";
+import { getBoardDaysForBoard, getUserBoardsAsArray, getUserBoardsOrdering, getUserDayNotes, mapBoardIdAsRecord } from "@/utils/supabase/amy/helpers";
+import { AmySupabaseClient, createClient } from "@/utils/supabase/server";
 import { BoardWithDays } from "./board-with-days";
 import { Tables } from "@/types/supabase";
 import { CalendarFilters } from "./calendar-filters";
@@ -20,10 +20,45 @@ export default async function LebreCalendarPage({ params }: { params: { yearMont
     return boardDayTuples;
   }
 
-  const boardsA = await getUserBoardsAsArray(supabase, 'A');
-  const boardsB = await getUserBoardsAsArray(supabase, 'B');
-  const boardDayTuplesA = await getTuplesFromBoards(boardsA);
-  const boardDayTuplesB = await getTuplesFromBoards(boardsB);
+  async function filterSortTuplesInSection(supabase: AmySupabaseClient, tuples, section: string) {
+    const boardsOrdering = await getUserBoardsOrdering(supabase, section);
+    if (!boardsOrdering) { 
+      return tuples;
+    }
+
+    const map = mapBoardIdAsRecord(tuples, (tuple) => {
+      return tuple[0].id
+    });
+    const resultArr = [];
+    for (const id of boardsOrdering) {
+      resultArr.push(map[id]);
+    }
+    return resultArr;
+  }
+
+  const boards = await getUserBoardsAsArray(supabase);
+  const boardDayTuples = await getTuplesFromBoards(boards);
+
+  let boardDayTuplesA = [];
+  let boardDayTuplesB = [];
+
+  // filter and sort
+  if (boards) {
+    for (const boardDayTuple of boardDayTuples) {
+      const [board, boardDays] = boardDayTuple; // array destructuring! proud
+      const boardId = board.id;
+
+      if (board.section == 'A') { // not marked; A
+        boardDayTuplesA.push(boardDayTuple);
+      } else if (board.section == 'B') { // not marked; B
+        boardDayTuplesB.push(boardDayTuple);
+      } else {
+        throw "LebreHomePage: Invalid `board` in `boards`"
+      }
+    }
+  }
+  boardDayTuplesA = await filterSortTuplesInSection(supabase, boardDayTuplesA, 'A');
+  boardDayTuplesB = await filterSortTuplesInSection(supabase, boardDayTuplesB, 'B');
 
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">

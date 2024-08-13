@@ -113,16 +113,19 @@ export type Database = {
       }
       user_info: {
         Row: {
+          boards_ordering: Json | null
           display_name: string | null
           id: string
           start_weekday: number
         }
         Insert: {
+          boards_ordering?: Json | null
           display_name?: string | null
           id: string
           start_weekday?: number
         }
         Update: {
+          boards_ordering?: Json | null
           display_name?: string | null
           id?: string
           start_weekday?: number
