@@ -72,7 +72,8 @@ export default async function LebreCreateBoardPage() {
       <ul>
         {boards.map(board => (
         <li key={board.id} className="mt-3"> 
-          {board.board_title} : {board.section} -- 
+          {board.board_title} : {board.section} 
+          {/* -- 
           <Link
             href={`/lebre/board/${board.id}`}
             className="todo-button purple-button-colors"
@@ -84,7 +85,7 @@ export default async function LebreCreateBoardPage() {
             className="todo-button skip-button-colors"
           >
             Edit
-          </Link>
+          </Link> */}
         </li>
         ))}
       </ul>
