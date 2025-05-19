@@ -1,0 +1,108 @@
+a@Computer amy-main % git diff
+diff --git a/README.md b/README.md
+index c28bca4..f7898b2 100644
+--- a/README.md
++++ b/README.md
+@@ -8,6 +8,9 @@
+   - add board title: auto clear after submit <-
+ - special single-board page
+
++- bug: empty notes
++- change delete menu to be working...
++
+ - home: show the date
+ - calendar: show the month
+
+diff --git a/app/globals.css b/app/globals.css
+index 0e20879..8aeb8f9 100644
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -127,6 +127,7 @@
+     @apply flex-1;
+     @apply h-12;
+
++    @apply flex;
+     @apply p-1;
+   }
+
+diff --git a/app/lebre/board/[boardId]/single-board-cal.tsx b/app/lebre/board/[boardId]/single-board-cal.tsx
+index 2b4b5b5..320b69f 100644
+--- a/app/lebre/board/[boardId]/single-board-cal.tsx
++++ b/app/lebre/board/[boardId]/single-board-cal.tsx
+@@ -20,6 +20,8 @@ type SingleCalSquare = {
+ export function SingleBoardCal({ board, boardDays, startWeekday }: SingleBoardCalProps) {
+   // const [shouldShowSkipped, setShouldShowSkipped] = useAtom(shouldShowSkippedAtom);
+
++  startWeekday=2;
++
+   // const currentDate = new Date('Feb 5, 2023 19:24:00');
+   const currentDate = getTodayPST();
+   const monthNumDays = new Date(currentDate.getFullYear(), currentDate.getMonth()+1, 0).getDate();
+@@ -70,7 +72,7 @@ export function SingleBoardCal({ board, boardDays, startWeekday }: SingleBoardCa
+           DAY_NAMES.map((_, index) => {
+             const squareToDay = (index+startWeekday+7)%7;
+             return (<div
+-              className="calendar-child-h12 content-end"
++              className="calendar-child-h12 justify-end items-end"
+               key={`dayName-${squareToDay}`}
+             >
+               <strong>{DAY_NAMES[squareToDay]}</strong>
+diff --git a/app/lebre/manage_boards/page.tsx b/app/lebre/manage_boards/page.tsx
+index 1df7aee..6cd0f18 100644
+--- a/app/lebre/manage_boards/page.tsx
++++ b/app/lebre/manage_boards/page.tsx
+@@ -73,7 +73,7 @@ export default async function LebreCreateBoardPage() {
+         {boards.map(board => (
+         <li key={board.id} className="mt-3">
+           {board.board_title} : {board.section}
+-          {/* --
++          --
+           <Link
+             href={`/lebre/board/${board.id}`}
+             className="todo-button purple-button-colors"
+@@ -85,7 +85,7 @@ export default async function LebreCreateBoardPage() {
+             className="todo-button skip-button-colors"
+           >
+             Edit
+-          </Link> */}
++          </Link>
+         </li>
+         ))}
+       </ul>
+diff --git a/app/roomba/game-client.tsx b/app/roomba/game-client.tsx
+index d39aeca..463b20e 100644
+--- a/app/roomba/game-client.tsx
++++ b/app/roomba/game-client.tsx
+@@ -18,16 +18,16 @@ export function GameClient() {
+       const ctx = canvas.getContext("2d");
+       if (ctx === null) return;
+
+-      ctx.strokeStyle = "rgb(203 213 225)";
++      ctx.strokeStyle = "rgb(203 213 225 / 20%)";
+       ctx.lineWidth = R_RADIUS*2;
+       ctx.beginPath(); ctx.moveTo ((C_WIDTH/2), (C_HEIGHT-R_RADIUS));
+       ctx.lineTo (270,120);
+       ctx.stroke();
+
+-      ctx.fillStyle = "rgb(200 0 0)";
+-      ctx.fillRect(200, 400, (C_WIDTH-200-200), 70);
++      // ctx.fillStyle = "rgb(200 0 0)";
++      // ctx.fillRect(200, 400, (C_WIDTH-200-200), 70);
+
+-      ctx.fillStyle = "rgb(0 0 200 / 50%)";
++      ctx.fillStyle = "rgb(0 0 200)";
+       ctx.beginPath(); ctx.arc((C_WIDTH/2), (C_HEIGHT-R_RADIUS), R_RADIUS, 0, 2 * Math.PI, false); ctx.fill();
+     }
+   }, []);
+@@ -38,8 +38,6 @@ export function GameClient() {
+         width={C_WIDTH}
+         height={C_HEIGHT}
+         className="border border-2 border-lime-600"></canvas>
+-
+-
+     </div>
+   );
+ }
+\ No newline at end of file
+a@Computer amy-main % git status
+On branch main
