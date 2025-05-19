@@ -3,11 +3,26 @@ import { AmySupabaseClient, createClient } from "@/utils/supabase/server";
 import { BoardWithDays } from "./board-with-days";
 import { Tables } from "@/types/supabase";
 import { CalendarFilters } from "./calendar-filters";
+import Link from "next/link";
 
 type QuickBoardTuples = [
   Tables<'boards'>,
   Tables<'board_days'>[],
 ]
+
+function getPrevNextMonth(yearMonth: string | number) {
+  let y = Math.floor(Number(yearMonth) / 100);
+  let m = Number(yearMonth) % 100;
+  let prevY = m === 1 ? y - 1 : y;
+  let prevM = m === 1 ? 12 : m - 1;
+  let nextY = m === 12 ? y + 1 : y;
+  let nextM = m === 12 ? 1 : m + 1;
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return {
+    prevMonth: `${prevY}${pad(prevM)}`,
+    nextMonth: `${nextY}${pad(nextM)}`
+  };
+}
 
 export default async function LebreCalendarPage({ params }: { params: { yearMonth: string } }) {
   const yearMonthInt = parseInt(params.yearMonth);
@@ -65,10 +80,15 @@ export default async function LebreCalendarPage({ params }: { params: { yearMont
   boardDayTuplesA = await filterSortTuplesInSection(supabase, boardDayTuplesA, 'A');
   boardDayTuplesB = await filterSortTuplesInSection(supabase, boardDayTuplesB, 'B');
 
+  const { prevMonth, nextMonth } = getPrevNextMonth(params.yearMonth);
+
   return (
     <div className="flex-1 flex flex-col max-w-4xl w-full px-3 ">
       <h2>Lebre: All boards</h2>
-
+      <div className="flex gap-4 my-2">
+        <Link href={`/lebre/calendar/${prevMonth}`} className="text-indigo-800 font-bold">Prev month</Link>
+        <Link href={`/lebre/calendar/${nextMonth}`} className="text-indigo-800 font-bold">Next month</Link>
+      </div>
       <CalendarFilters/>
 
       <BoardWithDays boardDayTuples={boardDayTuplesA}/>
