@@ -11,9 +11,10 @@ import {
   DragonState,
   FOOD_SLOTS_MAX 
 } from "@/utils/supabase/solstra/helpers";
-import { getSolisStatusLineByIndex } from "@/utils/solstra/game-content";
+import { getSolisStatusLineByIndex, getRandomSolisFeedingLine } from "@/utils/solstra/game-content";
 import Image from "next/image";
 import solisImage from "../game-content/catdragon-solis-placeholder300.png";
+import FeedingModal from "../components/FeedingModal";
 
 export default function TemplePage() {
   const [dragonState, setDragonState] = useState<DragonState | null>(null);
@@ -23,6 +24,13 @@ export default function TemplePage() {
   const [feeding, setFeeding] = useState(false);
   const [dragonStatus, setDragonStatus] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
+  const [feedingModal, setFeedingModal] = useState<{
+    isVisible: boolean;
+    feedingLine: string;
+  }>({
+    isVisible: false,
+    feedingLine: ""
+  });
 
   const supabase = createClient();
 
@@ -58,6 +66,22 @@ export default function TemplePage() {
     }
   };
 
+  // Show feeding modal
+  const showFeedingModal = (feedingLine: string) => {
+    setFeedingModal({
+      isVisible: true,
+      feedingLine
+    });
+  };
+
+  // Hide feeding modal
+  const hideFeedingModal = () => {
+    setFeedingModal(prev => ({
+      ...prev,
+      isVisible: false
+    }));
+  };
+
   // Handle feeding the dragon
   const handleFeedDragon = async () => {
     if (!userId || currentSlots <= 0 || feeding) return;
@@ -66,6 +90,10 @@ export default function TemplePage() {
     try {
       await feedDragon(supabase, userId);
       await loadDragonState(); // Reload state (preserves status timing)
+      
+      // Show feeding modal with random line
+      const feedingLine = getRandomSolisFeedingLine();
+      showFeedingModal(feedingLine);
     } catch (error) {
       console.error("Error feeding dragon:", error);
     } finally {
@@ -175,6 +203,14 @@ export default function TemplePage() {
           </button>
         </div>
       </div>
+
+      {/* Feeding Modal */}
+      {feedingModal.isVisible && (
+        <FeedingModal
+          feedingLine={feedingModal.feedingLine}
+          onDismiss={hideFeedingModal}
+        />
+      )}
     </div>
   );
 }

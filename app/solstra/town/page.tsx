@@ -16,6 +16,7 @@ import {
 } from "@/utils/solstra/game-content";
 import DialogueBox from "../components/DialogueBox";
 import HarvestModal from "../components/HarvestModal";
+import CharacterName from "../components/CharacterName";
 
 interface VillagerState {
   name: string;
@@ -208,9 +209,11 @@ export default function TownPage() {
           <div key={villager.name} className="solstra-card-compact">
             <div className="flex justify-between items-center">
               <div className="flex-1">
-                <h3 className="font-semibold text-base mb-1">{villager.name}</h3>
+                <h3 className="text-base mb-1">
+                  <CharacterName name={villager.name} />
+                </h3>
                 <p className="text-gray-700 text-sm">
-                  <strong>{villager.name}</strong>{villager.standingLine}
+                  <CharacterName name={villager.name} />{villager.standingLine}
                 </p>
               </div>
               

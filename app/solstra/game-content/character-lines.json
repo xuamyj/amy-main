@@ -88,24 +88,6 @@
     ]
   },
   "STANDING_LINE_ENDINGS": [
-    " is standing around.",    
-    " is sitting on the bench",
-    " is thinking about what to do today.",
-    " is enjoying the morning sunlight.",
-    " is watching the clouds drift by below.",
-    " is listening to the wind through the temple.",
-    " is admiring the fountain.",
-    " is checking on the ripening fruit.",
-    " is watching the cat-dragon play.",
-    " is sorting through today's harvest.",
-    " is warming up in the bright sky.",
-    " is humming a quiet tune.",
-    " is stretching in the open air.",
-    " is counting the olive trees.",
-    " is testing the breeze direction.",
-    " is wiping dirt from their hands.",
-    " is scanning the floating paths.",
-    " is adjusting their sun hat.",
     " is thinking.",
     " is relaxing.",
     " is waiting.",
@@ -133,5 +115,10 @@
     "Solis collected all the fallen leaves in one pile, very proud of herself!",
     "Solis has been saving the prettiest berries, like she's planning something special!",
     "Solis made a little nest of soft things, big enough for two!"
+  ],
+  "SOLIS_FEEDING_LINES": [
+    "Solis is grateful for the food!",
+    "Solis is happy to be alive!",
+    "Solis is glad to eat something so tasty!"
   ]
 }

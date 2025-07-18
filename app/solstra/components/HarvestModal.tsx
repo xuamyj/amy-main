@@ -1,5 +1,7 @@
 "use client";
 
+import CharacterName from "./CharacterName";
+
 interface HarvestModalProps {
   characterName: string;
   item: string;
@@ -25,7 +27,7 @@ export default function HarvestModal({ characterName, item, onDismiss }: Harvest
           {item}
         </div>
         <div className="text-sm text-gray-600 mb-4">
-          From {characterName}
+          From <CharacterName name={characterName} />
         </div>
         <div className="solstra-harvest-hint">
           Tap anywhere to continue

@@ -66,3 +66,56 @@ export function getSolisStatusLineByIndex(index: number): string {
   const lines = characterLines.SOLIS_STATUS_LINES
   return lines[index % lines.length]
 }
+
+/**
+ * Get a random Solis feeding line
+ */
+export function getRandomSolisFeedingLine(): string {
+  const lines = characterLines.SOLIS_FEEDING_LINES
+  return lines[Math.floor(Math.random() * lines.length)]
+}
+
+/**
+ * Character color mapping
+ */
+export const CHARACTER_COLORS: Record<string, string> = {
+  Ajax: '#d65c06',
+  Banner: '#e8b025',
+  Sapphira: '#2063b6',
+  Tessa: '#abad23',
+  Lana: '#cf8fca',
+  Leonidas: '#be7113'
+}
+
+/**
+ * Get the color for a character name
+ */
+export function getCharacterColor(characterName: string): string {
+  return CHARACTER_COLORS[characterName] || '#374151'
+}
+
+/**
+ * Parse text and return data structure for rendering character names with styles
+ */
+export function parseTextWithCharacterNames(text: string) {
+  const characterNames = Object.keys(CHARACTER_COLORS);
+  const regex = new RegExp(`\\b(${characterNames.join('|')})\\b`, 'g');
+  
+  const parts = text.split(regex);
+  
+  return parts.map((part, index) => {
+    if (characterNames.includes(part)) {
+      return {
+        type: 'character',
+        text: part,
+        color: CHARACTER_COLORS[part],
+        key: index
+      };
+    }
+    return {
+      type: 'text',
+      text: part,
+      key: index
+    };
+  });
+}

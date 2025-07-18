@@ -135,7 +135,7 @@ export async function updateDragonFoodSlots(
 }
 
 /**
- * Feed the dragon (reduce food slots by 1, preserves timing)
+ * Feed the dragon (reduce food slots by 1, resets timer only when going from 3->2 slots)
  */
 export async function feedDragon(supabase: SupabaseClient, userId: string): Promise<DragonState> {
   const dragonState = await getDragonState(supabase, userId)
@@ -145,7 +145,10 @@ export async function feedDragon(supabase: SupabaseClient, userId: string): Prom
     throw new Error("No food slots available")
   }
 
-  return updateDragonFoodSlots(supabase, userId, currentSlots - 1, true)
+  const newSlots = currentSlots - 1
+  const shouldResetTimer = currentSlots === 3 // Reset timer only when going from 3->2
+  
+  return updateDragonFoodSlots(supabase, userId, newSlots, !shouldResetTimer)
 }
 
 /**

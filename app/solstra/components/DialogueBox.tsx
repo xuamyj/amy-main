@@ -1,5 +1,7 @@
 "use client";
 
+import CharacterName from "./CharacterName";
+
 interface DialogueBoxProps {
   characterName: string;
   text: string;
@@ -19,7 +21,7 @@ export default function DialogueBox({ characterName, text, onDismiss }: Dialogue
     <div className="solstra-dialogue-overlay" onClick={handleOverlayClick}>
       <div className="solstra-dialogue-box" onClick={handleContentClick}>
         <div className="solstra-dialogue-character-name">
-          {characterName}
+          <CharacterName name={characterName} />
         </div>
         <div className="solstra-dialogue-text">
           "{text}"
