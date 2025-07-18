@@ -111,6 +111,41 @@ export type Database = {
           },
         ]
       }
+      generated_quizzes: {
+        Row: {
+          id: number
+          user_id: string
+          scenario: string
+          outcome: string
+          quiz_data: Json
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          user_id: string
+          scenario: string
+          outcome: string
+          quiz_data: Json
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          user_id?: string
+          scenario?: string
+          outcome?: string
+          quiz_data?: Json
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_quizzes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_info: {
         Row: {
           boards_ordering: Json | null
