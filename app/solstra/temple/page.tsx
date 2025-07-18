@@ -174,7 +174,7 @@ export default function TemplePage() {
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium">Looking for food</span>
-            <span className="solstra-text-sm">
+            <span className="solstra-harvest-hint">
               {currentSlots < FOOD_SLOTS_MAX && timeUntilNext > 0 && 
                 `Next in ${formatTimeRemaining(timeUntilNext)}`
               }

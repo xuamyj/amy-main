@@ -14,8 +14,15 @@
       "Vinegar", 
       "Olive Oil"
     ],
-    "Leonidas": [
-      "Fish"
+    "Tessa": [
+      "Flour",
+      "Celery",
+      "Corn",
+      "Tomato",
+      "Zucchini",
+      "Onion",
+      "Bell Pepper",
+      "Eggplant"
     ],
     "Banner": [
       "Orange",
@@ -25,15 +32,8 @@
       "Grape",
       "Pomegranate"
     ],
-    "Lana": [
-      "Crocus",
-      "Chaste-Flower",
-      "Myrtle",
-      "Rose",
-      "Morning Glory",
-      "Poppy",
-      "Amaranth",
-      "Asphodel"
+    "Leonidas": [
+      "Fish"
     ],
     "Sapphira": [
       "Laurel",
@@ -45,15 +45,15 @@
       "Rosemary",
       "Garlic"
     ],
-    "Tessa": [
-      "Flour",
-      "Celery",
-      "Corn",
-      "Tomato",
-      "Zucchini",
-      "Onion",
-      "Bell Pepper",
-      "Eggplant"
+    "Lana": [
+      "Crocus",
+      "Chaste-Flower",
+      "Myrtle",
+      "Rose",
+      "Morning Glory",
+      "Poppy",
+      "Amaranth",
+      "Asphodel"
     ]
   }
 }

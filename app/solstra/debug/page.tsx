@@ -63,10 +63,6 @@ Dragon State:
   const handleResetHarvests = async () => {
     if (!userId || resetting) return;
 
-    if (!confirm("Are you sure you want to reset all villager harvests for today? This will allow you to harvest from all villagers again.")) {
-      return;
-    }
-
     setResetting(true);
     try {
       await resetTodayVillagerHarvests(supabase, userId);
