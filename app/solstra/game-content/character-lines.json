@@ -1,0 +1,137 @@
+{
+  "GREETING_LINES": {
+    "Ajax": [
+      "Ah, perfect timing! I was just about to tell someone about my legendary honey harvest - the bees practically begged me to take their golden treasure!",
+      "Welcome, friend! You've arrived at the finest merchant stall this side of the floating cities, run by yours truly!",
+      "You know, just yesterday I single-handedly negotiated the greatest trade deal in recent memory - but I suppose I have time for another customer.",
+      "Step right up! These honeyed treats didn't just make themselves, you know - took all my considerable skill!",
+      "Another satisfied customer approaches! Word of my legendary products spreads faster than I expected.",
+      "Greetings! I don't suppose you've heard the tale of how I discovered this prime trading spot? Quite the adventure!",
+      "Ah, someone with the good sense to visit the most renowned beekeeper in these parts!"
+    ],
+    "Leonidas": [
+      "Nets don't mend themselves... but I suppose I can spare a moment.",
+      "Been a while since someone just wanted to talk. How are you holding up out here?",
+      "Caught anything good lately?",
+      "Storm's coming in. Better make this quick.",
+      "You remind me of someone I used to sail with... in a good way.",
+      "_grunts_ Fish aren't biting today anyway.",
+      "Sea's been kind recently. Makes me almost optimistic."
+    ],
+    "Banner": [
+      "Hello there! I was just reading about ancient consonants - fascinating stuff, really.",
+      "Welcome! The light's been particularly warm today, perfect for growing things.",
+      "The orchard's really flourishing - want to see what's ripe today?",
+      "I just finished this chapter on ancient planting techniques - remarkable what people used to know!",
+      "You look like you could use some sunshine. The light's especially good for lifting spirits.",
+      "Hello! I was just thinking how nice it is when people take time to visit each other.",
+      "Been experimenting with a new fruit blend - want to be my taste tester?"
+    ],
+    "Lana": [
+      "_sigh_ Let me guess, another warband spotted on the horizon?",
+      "Oh, wouldn't it be wonderful if the next ship brought news of those crystal gardens I've heard about?",
+      "_gazes at the horizon_ I keep hoping the next sail will bring news of somewhere... gentle.",
+      "Oh, hello! Please tell me you have stories of beautiful places far from here.",
+      "You haven't heard any rumors of floating gardens recently, have you? _hopeful look_",
+      "_contented sigh_ You know, I used to think this place was too quiet... but having you around makes the calm feel more like... possibility.",
+      "_gazes around appreciatively_ Our peaceful little corner feels less lonely when there's someone who truly sees its beauty."
+    ],
+    "Sapphira": [
+      "Your aura's looking a bit cloudy today - stress, perhaps? I've got just the herb blend for that.",
+      "The stars whispered you'd be stopping by... or maybe that was just my excellent intuition.",
+      "Need a charm? A reading? Or are you just here to admire my magnificent herb garden?",
+      "The cards have been chatty today - someone important was going to visit. Must be you!",
+      "Your energy's quite interesting... when's the last time you cleansed your aura?",
+      "Perfect timing! I just finished blessing a new batch of warding stones.",
+      "The herbs told me someone would need guidance today. They're surprisingly gossipy, plants."
+    ],
+    "Tessa": [
+      "Oh! Hello... I was just tending the tomatoes. They're coming along nicely this season.",
+      "I hope you don't mind the clay on my hands - I was working on a new pot design...",
+      "I just pulled the latest batch of bowls from the kiln - still learning, but they turned out okay.",
+      "Oh, you startled me! I was lost in thought about a new planting pattern...",
+      "The soil's been so rich lately - everything seems to want to grow.",
+      "I finally got that glazing pattern I've been trying for weeks - sometimes patience really does pay off.",
+      "I've been working on some serving dishes... nothing fancy, just practical things."
+    ]
+  },
+  "HARVEST_LINES": {
+    "Ajax": [
+      "Here, take this honey - harvested from my personally trained bees who know true quality when they make it!",
+      "Behold! The finest honey this side of the floating cities, gathered through my legendary bee-whispering techniques!",
+      "Pure golden honey, extracted through an absolutely heroic negotiation with the most stubborn hive you've ever seen!"
+    ],
+    "Leonidas": [
+      "Caught this this morning. It's fresh.",
+      "Here. Fish don't keep long, so use it soon.",
+      "Good size on this one. Should make a decent meal."
+    ],
+    "Banner": [
+      "I've got some lovely oranges for you! Perfect ripeness - I've been watching them carefully.",
+      "These lemons turned out particularly well this season. The light's been just right for citrus.",
+      "These fruits are at peak ripeness. I think our friend will appreciate the flavor."
+    ],
+    "Lana": [
+      "I picked these flowers this morning - they're almost too beautiful to give away, but I suppose that's the point.",
+      "These remind me of the flower gardens I've heard about in the northern cities... _wistful sigh_",
+      "I thought these might brighten someone's day. Or maybe feed a certain temple guardian?"
+    ],
+    "Sapphira": [
+      "Fresh herbs, picked at just the right moon phase for maximum potency.",
+      "These herbs have been blessed under starlight - they should serve you well.",
+      "The plants told me it was time to harvest these. Well, not literally... or was it literally?"
+    ],
+    "Tessa": [
+      "I... I harvested extra vegetables this week. I thought you might like some.",
+      "The flour's fresh ground from my own grain. I hope it's useful for cooking.",
+      "These tomatoes turned out especially well this season. Please, take them."
+    ]
+  },
+  "STANDING_LINE_ENDINGS": [
+    " is standing around.",    
+    " is sitting on the bench",
+    " is thinking about what to do today.",
+    " is enjoying the morning sunlight.",
+    " is watching the clouds drift by below.",
+    " is listening to the wind through the temple.",
+    " is admiring the fountain.",
+    " is checking on the ripening fruit.",
+    " is watching the cat-dragon play.",
+    " is sorting through today's harvest.",
+    " is warming up in the bright sky.",
+    " is humming a quiet tune.",
+    " is stretching in the open air.",
+    " is counting the olive trees.",
+    " is testing the breeze direction.",
+    " is wiping dirt from their hands.",
+    " is scanning the floating paths.",
+    " is adjusting their sun hat.",
+    " is thinking.",
+    " is relaxing.",
+    " is waiting.",
+    " is daydreaming.",
+    " is humming.",
+    " is stretching.",
+    " is yawning.",
+    " is smiling.",
+    " is resting."
+  ],
+  "SOLIS_STATUS_LINES": [
+    "Solis has found a new favorite perch on a high ledge and shows it off proudly",
+    "Solis has been collecting interesting pebbles in a little pile and wants to show you each one",
+    "Solis discovered she can make echoes in the tower and demonstrates her 'singing'",
+    "Solis has figured out how to open a window and has been watching the world outside",
+    "Solis found a patch of sunlight that moves throughout the day and has been following it",
+    "Solis has been practicing flying and can now hover for a few seconds (shows off immediately)",
+    "Solis has learned to stack blocks or arrange objects in patterns",
+    "Solis has been 'hunting' dust motes in sunbeams and pounces playfully when you arrive",
+    "Solis has discovered she can make different sounds and greets you with a new chirp",
+    "Solis has been playing with her reflection in a puddle and tilts her head curiously at you",
+    "Solis has made friends with a bird that now visits regularly",
+    "Solis has been 'helping' the villagers with small tasks",
+    "Solis has been humming and making mystical sounds while she naps",
+    "Solis collected all the fallen leaves in one pile, very proud of herself",
+    "Solis has been saving the prettiest berries, like she's planning something special",
+    "Solis made a little nest of soft things, big enough for two"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "CHARACTER_NAMES": [
+    "Ajax",
+    "Leonidas",
+    "Banner",
+    "Lana",
+    "Sapphira",
+    "Tessa"
+  ],
+  "CHARACTER_HARVEST_ITEMS": {
+    "Ajax": [
+      "Honey",
+      "Wine",
+      "Vinegar", 
+      "Olive Oil"
+    ],
+    "Leonidas": [
+      "Fish"
+    ],
+    "Banner": [
+      "Orange",
+      "Strawberry",
+      "Lemon",
+      "Apple",
+      "Grape",
+      "Pomegranate"
+    ],
+    "Lana": [
+      "Crocus",
+      "Chaste-Flower",
+      "Myrtle",
+      "Rose",
+      "Morning Glory",
+      "Poppy",
+      "Amaranth",
+      "Asphodel"
+    ],
+    "Sapphira": [
+      "Laurel",
+      "Mint",
+      "Oregano",
+      "Dill",
+      "Parsley",
+      "Basil",
+      "Rosemary",
+      "Garlic"
+    ],
+    "Tessa": [
+      "Flour",
+      "Celery",
+      "Corn",
+      "Tomato",
+      "Zucchini",
+      "Onion",
+      "Bell Pepper",
+      "Eggplant"
+    ]
+  }
+}
