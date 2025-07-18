@@ -48,10 +48,12 @@ export default function QuizMakerHomePage() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col gap-20 max-w-4xl px-3">
-        <main className="flex-1 flex flex-col gap-6">
-          <h1 className="text-2xl font-bold">Quiz Maker</h1>
-          <p>Loading your quizzes...</p>
+      <div className="flex-1 flex flex-col gap-8 max-w-5xl px-6 py-8">
+        <main className="flex-1 flex flex-col gap-8">
+          <h1>Quiz Maker</h1>
+          <div className="quiz-card quiz-loading">
+            <p className="text-gray-600">Loading your quizzes...</p>
+          </div>
         </main>
       </div>
     );
@@ -59,50 +61,65 @@ export default function QuizMakerHomePage() {
 
   if (error) {
     return (
-      <div className="flex-1 flex flex-col gap-20 max-w-4xl px-3">
-        <main className="flex-1 flex flex-col gap-6">
-          <h1 className="text-2xl font-bold">Quiz Maker</h1>
-          <p className="text-red-600">Error: {error}</p>
+      <div className="flex-1 flex flex-col gap-8 max-w-5xl px-6 py-8">
+        <main className="flex-1 flex flex-col gap-8">
+          <h1>Quiz Maker</h1>
+          <div className="quiz-info-box quiz-info-error">
+            <p>Error: {error}</p>
+          </div>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col gap-20 max-w-4xl px-3">
-      <main className="flex-1 flex flex-col gap-6">
-        <h1 className="text-2xl font-bold">Quiz Maker</h1>
+    <div className="flex-1 flex flex-col gap-8 max-w-5xl px-6 py-8">
+      <main className="flex-1 flex flex-col gap-8">
+        <div className="text-center">
+          <h1>Welcome to Quiz Maker!</h1>
+          <p className="text-gray-600 mt-2 text-lg">Create, play, and share personality quizzes</p>
+        </div>
         
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 mb-3">Want to generate your own quiz?</p>
-          <Link 
-            href="/quiz-maker/generate"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-block"
-          >
-            Go to Generate Quiz
+        <div className="quiz-info-box quiz-info-primary">
+          <p className="mb-4 text-lg">Want to generate your own quiz?</p>
+          <Link href="/quiz-maker/generate" className="quiz-btn quiz-btn-primary">
+            🚀 Go to Generate Quiz
           </Link>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           {savedQuizzes.length === 0 ? (
-            <p className="text-gray-600">No quizzes available yet. Generate some quizzes first!</p>
+            <div className="quiz-card text-center py-12">
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">No quizzes yet!</h3>
+              <p className="text-gray-600 mb-6">Generate your first quiz to get started</p>
+              <Link href="/quiz-maker/generate" className="quiz-btn quiz-btn-primary">
+                Create Your First Quiz
+              </Link>
+            </div>
           ) : (
             <>
-              <p className="text-gray-600">Choose a quiz to play:</p>
-              <div className="space-y-3">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">Your Quizzes</h2>
+                <p className="text-gray-600">Choose a quiz to play:</p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {savedQuizzes.map((quiz) => (
                   <Link
                     key={quiz.id}
                     href={`/quiz-maker/play/${quiz.id}`}
-                    className="block p-4 border border-gray-200 rounded cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="quiz-card quiz-card-interactive quiz-list-item group"
                   >
-                    <h3 className="font-medium">
-                      Live a day as <span className="text-blue-600">{quiz.scenario}</span> and 
-                      we'll tell you <span className="text-blue-600">{quiz.outcome}</span>
-                    </h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Created on {formatDate(quiz.created_at)}
-                    </p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                        Live a day as <span className="text-blue-600">{quiz.scenario}</span>
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3">
+                        and we'll tell you <span className="text-purple-600 font-medium">{quiz.outcome}</span>
+                      </p>
+                      <div className="flex items-center text-xs text-gray-500">
+                        <span>{formatDate(quiz.created_at)}</span>
+                      </div>
+                    </div>
                   </Link>
                 ))}
               </div>

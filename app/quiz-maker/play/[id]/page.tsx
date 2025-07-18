@@ -150,9 +150,11 @@ export default function PlayQuizPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col gap-20 max-w-4xl px-3">
-        <main className="flex-1 flex flex-col gap-6">
-          <h1 className="text-2xl font-bold">Loading Quiz...</h1>
+      <div className="flex-1 flex flex-col gap-8 max-w-4xl px-6 py-8">
+        <main className="flex-1 flex flex-col gap-8">
+          <div className="quiz-card quiz-loading text-center py-12">
+            <h1>Loading Quiz...</h1>
+          </div>
         </main>
       </div>
     );
@@ -160,16 +162,20 @@ export default function PlayQuizPage() {
 
   if (error || !quiz) {
     return (
-      <div className="flex-1 flex flex-col gap-20 max-w-4xl px-3">
-        <main className="flex-1 flex flex-col gap-6">
-          <h1 className="text-2xl font-bold">Quiz Not Found</h1>
-          <p className="text-red-600">{error || 'Quiz could not be loaded'}</p>
-          <button 
-            onClick={() => router.push('/quiz-maker/play')}
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 w-fit"
-          >
-            ← Back to Quiz List
-          </button>
+      <div className="flex-1 flex flex-col gap-8 max-w-4xl px-6 py-8">
+        <main className="flex-1 flex flex-col gap-8">
+          <div className="text-center">
+            <h1>Quiz Not Found</h1>
+          </div>
+          <div className="quiz-info-box quiz-info-error text-center">
+            <p className="mb-4">{error || 'Quiz could not be loaded'}</p>
+            <button 
+              onClick={() => router.push('/quiz-maker')}
+              className="quiz-btn quiz-btn-secondary"
+            >
+              ← Back to Quiz List
+            </button>
+          </div>
         </main>
       </div>
     );
@@ -177,70 +183,82 @@ export default function PlayQuizPage() {
 
   if (showResults && results) {
     return (
-      <div className="flex-1 flex flex-col gap-20 max-w-4xl px-3">
-        <main className="flex-1 flex flex-col gap-6">
-          <div className="flex items-center gap-4 mb-4">
+      <div className="flex-1 flex flex-col gap-8 max-w-5xl px-6 py-8">
+        <main className="flex-1 flex flex-col gap-8">
+          <div className="flex items-center gap-4">
             <button 
               onClick={() => router.push('/quiz-maker')}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              className="quiz-btn quiz-btn-secondary"
             >
               ← Back to Quiz List
             </button>
           </div>
 
-          <div className="space-y-6">
-            <div className="text-center space-y-4">
-              <h1 className="text-3xl font-bold">Your Result!</h1>
-              <div className="p-6 border-2 border-blue-200 rounded-lg bg-blue-50">
-                <h2 className="text-2xl font-semibold text-blue-800 mb-2">
+          <div className="space-y-8">
+            <div className="text-center space-y-6">
+              <h1>Your Result!</h1>
+              <div className="quiz-result-card max-w-2xl mx-auto">
+                <h2 className="quiz-result-title mb-4">
                   {results.winningResult?.name || 'Unknown Result'}
                 </h2>
-                <p className="text-lg text-blue-700">
+                <p className="quiz-result-description">
                   {results.winningResult?.description || 'No description available'}
                 </p>
               </div>
               
               <button 
                 onClick={() => setShowBreakdown(!showBreakdown)}
-                className="bg-gray-600 text-white px-6 py-3 rounded hover:bg-gray-700 text-lg"
+                className="quiz-btn quiz-btn-secondary text-lg"
               >
                 {showBreakdown ? 'Hide score breakdown' : 'Show score breakdown?'}
               </button>
             </div>
 
             {showBreakdown && (
-              <div className="space-y-6 mt-8">
-                <h3 className="text-2xl font-bold">Score Breakdown</h3>
+              <div className="space-y-8">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-800">Score Breakdown</h3>
+                </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="text-lg font-semibold">Final Scores:</h4>
+                <div className="quiz-card">
+                  <h4 className="text-lg font-semibold mb-4">Final Scores:</h4>
+                  <div className="space-y-3">
                     {quiz.quiz_data.results.map(result => (
-                      <div key={result.id} className="flex justify-between p-2 border rounded">
-                        <span className={results.winningResult?.id === result.id ? 'font-bold text-blue-600' : ''}>
-                          {result.name}
-                        </span>
-                        <span className={results.winningResult?.id === result.id ? 'font-bold text-blue-600' : ''}>
-                          {results.scores[result.id] || 0} points
-                        </span>
+                      <div 
+                        key={result.id} 
+                        className={`quiz-score-item ${results.winningResult?.id === result.id ? 'winner' : ''}`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">{result.name}</span>
+                          <span className="text-lg font-bold">
+                            {results.scores[result.id] || 0} points
+                          </span>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <h4 className="text-lg font-semibold">Answer by Answer Breakdown:</h4>
-                  {results.answerBreakdown.map((item, index) => (
-                    <div key={index} className="p-4 border border-gray-200 rounded space-y-2">
-                      <h5 className="font-medium">Q{index + 1}: {item.question}</h5>
-                      <p className="text-blue-600">Your answer: {item.selectedAnswer}</p>
-                      <div className="text-sm text-gray-600">
-                        Points awarded: {Object.entries(item.pointsAwarded).map(([result, points]) => 
-                          `${result}: +${points}`
-                        ).join(', ')}
+                <div className="quiz-card">
+                  <h4 className="text-lg font-semibold mb-6">Answer by Answer Breakdown:</h4>
+                  <div className="space-y-4">
+                    {results.answerBreakdown.map((item, index) => (
+                      <div key={index} className="quiz-card bg-white/50 border border-gray-100">
+                        <h5 className="font-semibold text-gray-800 mb-2">
+                          Q{index + 1}: {item.question}
+                        </h5>
+                        <p className="text-blue-600 font-medium mb-2">
+                          Your answer: {item.selectedAnswer}
+                        </p>
+                        <div className="text-sm text-gray-600">
+                          <span className="font-medium">Points awarded: </span>
+                          {Object.entries(item.pointsAwarded).map(([result, points]) => 
+                            `${result}: +${points}`
+                          ).join(', ')}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -255,68 +273,84 @@ export default function PlayQuizPage() {
   const progress = ((currentQuestionIndex + 1) / quiz.quiz_data.questions.length) * 100;
 
   return (
-    <div className="flex-1 flex flex-col gap-20 max-w-4xl px-3">
-      <main className="flex-1 flex flex-col gap-6">
-        <div className="flex items-center gap-4 mb-4">
+    <div className="flex-1 flex flex-col gap-8 max-w-4xl px-6 py-8">
+      <main className="flex-1 flex flex-col gap-8">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <button 
-            onClick={() => router.push('/quiz-maker/play')}
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            onClick={() => router.push('/quiz-maker')}
+            className="quiz-btn quiz-btn-secondary"
           >
             ← Back to Quiz List
           </button>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold">
-              Live a day as {quiz.scenario} and we'll tell you {quiz.outcome}
+          <div className="flex-1 text-center sm:text-left">
+            <h1 className="text-lg font-semibold text-gray-700">
+              Live a day as <span className="text-blue-600">{quiz.scenario}</span> and 
+              we'll tell you <span className="text-purple-600">{quiz.outcome}</span>
             </h1>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
-        <p className="text-sm text-gray-600">
-          Question {currentQuestionIndex + 1} of {quiz.quiz_data.questions.length}
-        </p>
-
-        <div className="space-y-6">
-          <h2 className="text-2xl font-semibold">{currentQuestion.question}</h2>
-          
-          <div className="space-y-3">
-            {currentQuestion.answers.map((answer) => (
-              <button
-                key={answer.id}
-                onClick={() => handleAnswerSelect(answer.id)}
-                className={`w-full p-4 text-left border-2 rounded-lg transition-colors ${
-                  selectedAnswerId === answer.id
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                {answer.text}
-              </button>
-            ))}
+        <div className="space-y-2">
+          <div className="quiz-progress-container">
+            <div 
+              className="quiz-progress-bar"
+              style={{ width: `${progress}%` }}
+            ></div>
           </div>
+          <p className="text-center text-gray-600 font-medium">
+            Question {currentQuestionIndex + 1} of {quiz.quiz_data.questions.length}
+          </p>
+        </div>
 
-          <div className="flex justify-between pt-4">
-            <button
-              onClick={handlePrevious}
-              disabled={currentQuestionIndex === 0}
-              className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 disabled:bg-gray-300"
-            >
-              Previous
-            </button>
+        <div className="quiz-question-card">
+          <div className="space-y-8">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">{currentQuestion.question}</h2>
+            </div>
             
-            <button
-              onClick={handleNext}
-              disabled={selectedAnswerId === undefined}
-              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 disabled:bg-gray-300"
-            >
-              {currentQuestionIndex === quiz.quiz_data.questions.length - 1 ? 'Finish' : 'Next'}
-            </button>
+            <div className="space-y-4">
+              {currentQuestion.answers.map((answer) => (
+                <button
+                  key={answer.id}
+                  onClick={() => handleAnswerSelect(answer.id)}
+                  className={`quiz-answer-option w-full ${
+                    selectedAnswerId === answer.id ? 'selected' : ''
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${
+                      selectedAnswerId === answer.id 
+                        ? 'bg-blue-500 border-blue-500' 
+                        : 'border-gray-300'
+                    }`}>
+                      {selectedAnswerId === answer.id && (
+                        <div className="w-2 h-2 bg-white rounded-full m-auto mt-0.5"></div>
+                      )}
+                    </div>
+                    <span className="text-left font-medium">{answer.text}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className="flex justify-between pt-6">
+              <button
+                onClick={handlePrevious}
+                disabled={currentQuestionIndex === 0}
+                className="quiz-btn quiz-btn-secondary"
+              >
+                ← Previous
+              </button>
+              
+              <button
+                onClick={handleNext}
+                disabled={selectedAnswerId === undefined}
+                className="quiz-btn quiz-btn-primary"
+              >
+                {currentQuestionIndex === quiz.quiz_data.questions.length - 1 ? 'Finish Quiz' : 'Next →'}
+              </button>
+            </div>
           </div>
         </div>
       </main>
