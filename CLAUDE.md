@@ -10,9 +10,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Application Architecture
 
-This is a Next.js 14+ application using the App Router pattern with Supabase for backend services. The application contains two main independent sections:
+This is a Next.js 14+ application using the App Router pattern with Supabase for backend services. The application contains three main independent sections:
 1. **Lebre** - Personal productivity/habit tracking tool
 2. **Quiz Maker** - AI-powered personality quiz generator and player
+3. **Solstra** - Peaceful sky-land game with dragon care and villager interactions
 
 ### Core Structure
 
@@ -223,3 +224,116 @@ CREATE TABLE generated_quizzes (
 - Claude API responses are validated before storage
 - Error handling for API failures and malformed responses
 - Session storage used for quiz state persistence during play
+
+## Solstra Section (`/solstra`)
+
+Solstra is a peaceful sky-land game featuring dragon care, villager interactions, and resource management. The game emphasizes a calm, inviting atmosphere with warm visual design.
+
+### Game Setting & Aesthetic
+
+**World Description:**
+- Sunny, brightly lit floating islands in the sky
+- Temple with small cat-dragon guardian named Solis
+- Abundant natural resources: fruits, vegetables, fish, honey, olive oil, flowers
+- Peaceful, contemplative atmosphere focused on care and community
+
+**Visual Design Constraints:**
+- Peaceful and inviting feel is paramount
+- Minimal UI color palette (1-2 accent colors) to let character colors stand out
+- No emojis in UI (reserved space for future 2D pixel art)
+- Solis represents warm sunlight/citrus energy, NOT fire
+
+### Character System
+
+**Named Characters with Color Coding:**
+- **Ajax**: `#d65c06` (warm brown-orange) 
+- **Banner**: `#e8b025` (golden yellow)
+- **Sapphira**: `#2063b6` (deep blue)
+- **Tessa**: `#abad23` (olive green)
+- **Lana**: `#cf8fca` (pink-purple)
+- **Leonidas**: `#be7113` (golden brown)
+
+**Character Name Styling:**
+- All character names rendered with `CharacterName` component (`app/solstra/components/CharacterName.tsx`)
+- Bold font weight with character-specific hex colors
+- Automatic color lookup via `getCharacterColor()` utility
+- Used in dialogues, harvests, and UI throughout the game
+
+### Theme Implementation
+
+**Color Scheme:**
+- **Primary Accent**: Warm amber/honey gold (`#d97706`) - echoes Solis's sunny warmth
+- **Secondary Accent**: Soft sky blue (`#38bdf8`) - peaceful floating sky atmosphere
+- **Background**: Clean white (`#ffffff`) for clarity
+- **Cards**: Warm cream gradients (`#ffffff` to `#fffef5`) with light blue borders
+- **Text**: Consistent dark gray (`#4b5563`) instead of black for softer appearance
+
+**CSS Architecture:**
+- Scoped theme file: `app/solstra/solstra-theme.css`
+- Component-based class naming (`.solstra-card`, `.solstra-btn`, etc.)
+- Custom text classes (`.solstra-text`, `.solstra-text-sm`, `.solstra-text-lg`)
+- Header styling (`.solstra-header-main`, `.solstra-header-section`)
+- All colors use theme-consistent hex values, avoiding Tailwind gray classes
+
+**Key Design Elements:**
+- Light blue cards on white background (floating island feel)
+- Warm golden buttons with gradient effects and subtle shadows
+- Semi-transparent modals with backdrop blur
+- Rounded corners and soft shadows throughout
+- Hover effects that enhance the peaceful, interactive feel
+
+### Game Mechanics
+
+**Dragon Care System:**
+- Solis has food slots that deplete over time (8 hours per slot, max 3 slots)
+- Feeding timer logic: 3→2 slots resets timer, 2→1 and 1→0 preserve timing
+- Status lines change hourly for variety
+- Feeding shows random appreciation messages
+
+**Villager Interaction:**
+- Six villagers each with unique personalities and harvest items
+- Daily harvest cycle (resets at 11 PM EDT)
+- Character-specific dialogue lines for greetings and harvests
+- Standing behavior descriptions for ambient life
+
+**Resource Management:**
+- Items: honey (Ajax), fish (Leonidas), fruits (Banner), flowers (Lana), herbs (Sapphira), vegetables (Tessa)
+- Harvest modals show item received with character attribution
+- All resources fed to Solis for care and growth
+
+### Technical Architecture
+
+**Database Schema:**
+- `solstra_dragon_state` - Dragon status, food slots, timing data
+- `solstra_villager_harvests` - Daily harvest tracking per user/villager
+- Uses Eastern Time for consistent day boundaries
+- Integer date formats (YYYYMMDD) for efficient querying
+
+**Key Components:**
+- `CharacterName.tsx` - Styled character name rendering
+- `DialogueBox.tsx` - Character interaction modal
+- `HarvestModal.tsx` - Item collection feedback  
+- `FeedingModal.tsx` - Dragon feeding confirmation
+
+**Helper Functions** (`utils/supabase/solstra/helpers.ts`):
+- `feedDragon()` - Handle feeding with timer logic
+- `calculateCurrentFoodSlots()` - Real-time slot calculation
+- `getDragonState()` - Fetch/create dragon data
+- `hasHarvestedFromVillager()` - Daily harvest tracking
+- Dragon status and villager harvest management
+
+**Game Content** (`utils/solstra/game-content.ts`):
+- Character dialogue lines stored in JSON
+- Color mapping and character utilities
+- Random line selection for dynamic content
+- Character name parsing for future rich text features
+
+### Development Notes
+
+- Game content separated into JSON files for easy modification
+- Character colors defined in TypeScript for type safety
+- Consistent timer mechanics across all dragon interactions
+- Debug tools available for testing without waiting for real-time delays
+- Scoped styling prevents conflicts with other application sections
+- All text uses custom CSS classes for consistent theming
+- Modal system designed for mobile-first interaction patterns

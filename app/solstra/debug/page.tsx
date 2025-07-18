@@ -105,19 +105,19 @@ Dragon State:
     return (
       <div className="w-full max-w-4xl flex flex-col items-center p-8">
         <h1 className="text-3xl font-bold mb-4">Debug</h1>
-        <p className="text-lg text-gray-600">Loading...</p>
+        <p className="solstra-text-lg">Loading...</p>
       </div>
     );
   }
 
   return (
     <div className="w-full max-w-4xl flex flex-col items-center p-8">
-      <h1 className="text-3xl font-bold mb-6">Debug Tools</h1>
+      <h1 className="text-3xl font-bold mb-6 solstra-header-main">Debug Tools</h1>
       
       <div className="w-full max-w-2xl space-y-6">
         {/* Dragon Debug Info */}
         <div className="solstra-card">
-          <h2 className="text-xl font-semibold mb-3">Dragon State Information</h2>
+          <h2 className="text-xl font-semibold mb-3 solstra-header-section">Dragon State Information</h2>
           <pre className="text-sm bg-gray-100 p-3 rounded whitespace-pre-wrap font-mono">
             {dragonInfo}
           </pre>
@@ -131,8 +131,8 @@ Dragon State:
 
         {/* Dragon Controls */}
         <div className="solstra-card">
-          <h2 className="text-xl font-semibold mb-3">Dragon Controls</h2>
-          <p className="text-gray-700 mb-4">
+          <h2 className="text-xl font-semibold mb-3 solstra-header-section">Dragon Controls</h2>
+          <p className="solstra-text mb-4">
             Manually add food slots to test the feeding system without waiting 8 hours.
           </p>
           <button
@@ -146,8 +146,8 @@ Dragon State:
 
         {/* Villager Controls */}
         <div className="solstra-card">
-          <h2 className="text-xl font-semibold mb-3">Villager Controls</h2>
-          <p className="text-gray-700 mb-4">
+          <h2 className="text-xl font-semibold mb-3 solstra-header-section">Villager Controls</h2>
+          <p className="solstra-text mb-4">
             Reset all villager harvest status for today so you can harvest from them again.
           </p>
           <button
@@ -160,9 +160,9 @@ Dragon State:
         </div>
 
         {/* Warning */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="font-semibold text-yellow-800 mb-2">⚠️ Debug Mode</h3>
-          <p className="text-yellow-700 text-sm">
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <h3 className="font-semibold text-purple-800 mb-2">⚠️ Debug Mode</h3>
+          <p className="text-purple-700 text-sm">
             These tools are for testing purposes only. They bypass normal game timing 
             and reset mechanisms. Use them to test features without waiting for real-time delays.
           </p>

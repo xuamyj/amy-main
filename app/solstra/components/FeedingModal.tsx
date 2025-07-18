@@ -17,8 +17,11 @@ export default function FeedingModal({ feedingLine, onDismiss }: FeedingModalPro
   return (
     <div className="solstra-harvest-modal" onClick={handleOverlayClick}>
       <div className="solstra-harvest-modal-content" onClick={handleContentClick}>
-        <div className="solstra-feeding-title">
-          ✨ {feedingLine} ✨
+        <div className="solstra-harvest-title">
+          ✨ You fed Solis! ✨
+        </div>
+        <div className="solstra-harvest-item">
+          {feedingLine}
         </div>
         <div className="solstra-harvest-hint">
           Tap anywhere to continue

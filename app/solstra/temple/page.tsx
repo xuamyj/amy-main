@@ -145,18 +145,18 @@ export default function TemplePage() {
     return (
       <div className="w-full max-w-4xl flex flex-col items-center p-8">
         <h1 className="text-3xl font-bold mb-4">Temple</h1>
-        <p className="text-lg text-gray-600">Loading...</p>
+        <p className="solstra-text-lg">Loading...</p>
       </div>
     );
   }
 
   return (
     <div className="w-full max-w-4xl flex flex-col items-center p-8">
-      <h1 className="text-3xl font-bold mb-6">Temple</h1>
+      <h1 className="text-3xl font-bold mb-6 solstra-header-main">Temple</h1>
       
       {/* Dragon Status */}
       <div className="solstra-card mb-6 w-full max-w-2xl">
-        <h2 className="text-xl font-semibold mb-4">Solis the Dragon</h2>
+        <h2 className="text-xl font-semibold mb-4 solstra-header-section">Solis the Dragon</h2>
         
         {/* Dragon Image */}
         <div className="flex justify-center mb-4">
@@ -168,13 +168,13 @@ export default function TemplePage() {
           />
         </div>
         
-        <p className="text-gray-700 mb-4">{dragonStatus}</p>
+        <p className="solstra-text mb-4">{dragonStatus}</p>
         
         {/* Looking for Food Bar */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium">Looking for food</span>
-            <span className="text-sm text-gray-600">
+            <span className="solstra-text-sm">
               {currentSlots < FOOD_SLOTS_MAX && timeUntilNext > 0 && 
                 `Next in ${formatTimeRemaining(timeUntilNext)}`
               }

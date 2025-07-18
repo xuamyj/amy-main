@@ -26,7 +26,7 @@ export default function HarvestModal({ characterName, item, onDismiss }: Harvest
         <div className="solstra-harvest-item">
           {item}
         </div>
-        <div className="text-sm text-gray-600 mb-4">
+        <div className="solstra-text-sm mb-4">
           From <CharacterName name={characterName} />
         </div>
         <div className="solstra-harvest-hint">

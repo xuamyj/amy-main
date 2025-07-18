@@ -37,7 +37,7 @@ export default async function SolstraLayout({
       {children}
       
       <footer className="w-full p-6 flex justify-center text-center text-sm mt-auto">
-        <p className="text-gray-600">
+        {/* <p className="text-gray-600">
           Powered by{" "}
           <a
             href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
@@ -47,7 +47,7 @@ export default async function SolstraLayout({
           >
             Supabase
           </a>
-        </p>
+        </p> */}
       </footer>
     </div>
   )
