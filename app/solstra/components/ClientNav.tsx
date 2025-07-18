@@ -34,6 +34,12 @@ export default function ClientNav() {
       >
         House
       </Link>
+      <Link 
+        href="/solstra/debug" 
+        className={`solstra-nav-button ${isActive("/solstra/debug") ? "active" : ""}`}
+      >
+        Debug
+      </Link>
     </div>
   );
 }
