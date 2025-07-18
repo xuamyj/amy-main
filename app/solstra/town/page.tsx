@@ -14,6 +14,8 @@ import {
   getRandomHarvestLine,
   getRandomHarvestItem
 } from "@/utils/solstra/game-content";
+import DialogueBox from "../components/DialogueBox";
+import HarvestModal from "../components/HarvestModal";
 
 interface VillagerState {
   name: string;
@@ -22,10 +24,34 @@ interface VillagerState {
   isLoading: boolean;
 }
 
+interface DialogueState {
+  isVisible: boolean;
+  characterName: string;
+  text: string;
+  onDismiss: () => void;
+}
+
+interface HarvestState {
+  isVisible: boolean;
+  characterName: string;
+  item: string;
+}
+
 export default function TownPage() {
   const [villagers, setVillagers] = useState<VillagerState[]>([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [dialogue, setDialogue] = useState<DialogueState>({
+    isVisible: false,
+    characterName: "",
+    text: "",
+    onDismiss: () => {}
+  });
+  const [harvest, setHarvest] = useState<HarvestState>({
+    isVisible: false,
+    characterName: "",
+    item: ""
+  });
 
   const supabase = createClient();
 
@@ -54,6 +80,41 @@ export default function TownPage() {
     }
   };
 
+  // Show dialogue box
+  const showDialogue = (characterName: string, text: string, onDismiss: () => void) => {
+    setDialogue({
+      isVisible: true,
+      characterName,
+      text,
+      onDismiss
+    });
+  };
+
+  // Hide dialogue box
+  const hideDialogue = () => {
+    setDialogue(prev => ({
+      ...prev,
+      isVisible: false
+    }));
+  };
+
+  // Show harvest modal
+  const showHarvest = (characterName: string, item: string) => {
+    setHarvest({
+      isVisible: true,
+      characterName,
+      item
+    });
+  };
+
+  // Hide harvest modal
+  const hideHarvest = () => {
+    setHarvest(prev => ({
+      ...prev,
+      isVisible: false
+    }));
+  };
+
   // Handle talking to a villager (harvest interaction)
   const handleTalkToVillager = async (villagerName: string) => {
     if (!userId) return;
@@ -69,12 +130,16 @@ export default function TownPage() {
       const hasHarvested = await hasHarvestedFromVillager(supabase, userId, villagerName);
       
       if (!hasHarvested) {
-        // Mark as harvested and show harvest message
+        // Mark as harvested and show harvest sequence
         await markVillagerHarvested(supabase, userId, villagerName);
         const harvestItem = getRandomHarvestItem(villagerName);
         const harvestLine = getRandomHarvestLine(villagerName);
         
-        alert(`${harvestLine}\n\nYou received: ${harvestItem}`);
+        // Show dialogue first, then harvest modal
+        showDialogue(villagerName, harvestLine, () => {
+          hideDialogue();
+          showHarvest(villagerName, harvestItem);
+        });
         
         // Update villager state
         setVillagers(prev => prev.map(v => 
@@ -85,7 +150,7 @@ export default function TownPage() {
       } else {
         // Just show greeting if already harvested
         const greetingLine = getRandomGreetingLine(villagerName);
-        alert(`${villagerName}: "${greetingLine}"`);
+        showDialogue(villagerName, greetingLine, hideDialogue);
         
         setVillagers(prev => prev.map(v => 
           v.name === villagerName 
@@ -138,28 +203,28 @@ export default function TownPage() {
     <div className="w-full max-w-4xl flex flex-col items-center p-8">
       <h1 className="text-3xl font-bold mb-6">Town</h1>
       
-      <div className="w-full max-w-2xl space-y-4">
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-3">
         {villagers.map((villager) => (
-          <div key={villager.name} className="solstra-card">
-            <div className="flex justify-between items-start mb-3">
+          <div key={villager.name} className="solstra-card-compact">
+            <div className="flex justify-between items-center">
               <div className="flex-1">
-                <h3 className="font-semibold text-lg mb-1">{villager.name}</h3>
-                <p className="text-gray-700">
+                <h3 className="font-semibold text-base mb-1">{villager.name}</h3>
+                <p className="text-gray-700 text-sm">
                   <strong>{villager.name}</strong>{villager.standingLine}
                 </p>
               </div>
               
-              <div className="flex flex-col items-end gap-2">
+              <div className="flex flex-col items-end gap-1 ml-3">
                 {villager.hasHarvested && (
-                  <span className="text-sm text-green-600 font-medium">
-                    ✓ Harvested today
+                  <span className="text-xs text-green-600 font-medium">
+                    ✓ Harvested
                   </span>
                 )}
                 
                 <button
                   onClick={() => handleTalkToVillager(villager.name)}
                   disabled={villager.isLoading}
-                  className="solstra-btn-small"
+                  className="solstra-btn-tiny"
                 >
                   {villager.isLoading ? "..." : 
                    villager.hasHarvested ? "Talk" : "Talk & Harvest"}
@@ -176,6 +241,24 @@ export default function TownPage() {
           The day resets at 11 PM Eastern.
         </p>
       </div>
+
+      {/* Dialogue Box */}
+      {dialogue.isVisible && (
+        <DialogueBox
+          characterName={dialogue.characterName}
+          text={dialogue.text}
+          onDismiss={dialogue.onDismiss}
+        />
+      )}
+
+      {/* Harvest Modal */}
+      {harvest.isVisible && (
+        <HarvestModal
+          characterName={harvest.characterName}
+          item={harvest.item}
+          onDismiss={hideHarvest}
+        />
+      )}
     </div>
   );
 }
