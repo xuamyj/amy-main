@@ -30,8 +30,8 @@ export default async function QuizMakerLayout({
             <AuthButton />
           </div>
           <div className="self-start flex justify-start gap-3">
-            <Link href="/quiz-maker" className="nav-button"> Quiz Maker Home </Link>
-            <Link href="/quiz-maker/play" className="nav-button"> Play </Link>
+            <Link href="/quiz-maker" className="nav-button"> Home / Play </Link>
+            <Link href="/quiz-maker/generate" className="nav-button"> Generate Quiz </Link>
             <Link href="/quiz-maker/data-backup" className="nav-button"> Data Backup </Link>
           </div>
         </div>

@@ -45,6 +45,7 @@ export default function PlayQuizPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   useEffect(() => {
     fetchQuiz();
@@ -98,6 +99,11 @@ export default function PlayQuizPage() {
     if (!quiz) return null;
 
     const scores: Record<number, number> = {};
+    const answerBreakdown: Array<{
+      question: string;
+      selectedAnswer: string;
+      pointsAwarded: Record<string, number>;
+    }> = [];
     
     // Initialize scores
     quiz.quiz_data.results.forEach(result => {
@@ -109,9 +115,19 @@ export default function PlayQuizPage() {
       const question = quiz.quiz_data.questions[parseInt(questionIndex)];
       const answer = question.answers.find(a => a.id === answerId);
       
-      if (answer) {
+      if (answer && question) {
+        const pointsForThisAnswer: Record<string, number> = {};
+        
         Object.entries(answer.points).forEach(([resultId, points]) => {
           scores[parseInt(resultId)] = (scores[parseInt(resultId)] || 0) + points;
+          const resultName = quiz.quiz_data.results.find(r => r.id === parseInt(resultId))?.name || `Result ${resultId}`;
+          pointsForThisAnswer[resultName] = points;
+        });
+
+        answerBreakdown.push({
+          question: question.question,
+          selectedAnswer: answer.text,
+          pointsAwarded: pointsForThisAnswer
         });
       }
     });
@@ -124,6 +140,7 @@ export default function PlayQuizPage() {
     return {
       winningResult,
       scores,
+      answerBreakdown,
       totalQuestions: quiz.quiz_data.questions.length,
       answeredQuestions: Object.keys(answers).length
     };
@@ -164,30 +181,69 @@ export default function PlayQuizPage() {
         <main className="flex-1 flex flex-col gap-6">
           <div className="flex items-center gap-4 mb-4">
             <button 
-              onClick={() => router.push('/quiz-maker/play')}
+              onClick={() => router.push('/quiz-maker')}
               className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
               ← Back to Quiz List
             </button>
           </div>
 
-          <div className="text-center space-y-4">
-            <h1 className="text-3xl font-bold">Your Result!</h1>
-            <div className="p-6 border-2 border-blue-200 rounded-lg bg-blue-50">
-              <h2 className="text-2xl font-semibold text-blue-800 mb-2">
-                {results.winningResult?.name || 'Unknown Result'}
-              </h2>
-              <p className="text-lg text-blue-700">
-                {results.winningResult?.description || 'No description available'}
-              </p>
+          <div className="space-y-6">
+            <div className="text-center space-y-4">
+              <h1 className="text-3xl font-bold">Your Result!</h1>
+              <div className="p-6 border-2 border-blue-200 rounded-lg bg-blue-50">
+                <h2 className="text-2xl font-semibold text-blue-800 mb-2">
+                  {results.winningResult?.name || 'Unknown Result'}
+                </h2>
+                <p className="text-lg text-blue-700">
+                  {results.winningResult?.description || 'No description available'}
+                </p>
+              </div>
+              
+              <button 
+                onClick={() => setShowBreakdown(!showBreakdown)}
+                className="bg-gray-600 text-white px-6 py-3 rounded hover:bg-gray-700 text-lg"
+              >
+                {showBreakdown ? 'Hide score breakdown' : 'Show score breakdown?'}
+              </button>
             </div>
-            
-            <button 
-              onClick={() => router.push(`/quiz-maker/play/${quizId}/results`)}
-              className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600 text-lg"
-            >
-              Show score breakdown?
-            </button>
+
+            {showBreakdown && (
+              <div className="space-y-6 mt-8">
+                <h3 className="text-2xl font-bold">Score Breakdown</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <h4 className="text-lg font-semibold">Final Scores:</h4>
+                    {quiz.quiz_data.results.map(result => (
+                      <div key={result.id} className="flex justify-between p-2 border rounded">
+                        <span className={results.winningResult?.id === result.id ? 'font-bold text-blue-600' : ''}>
+                          {result.name}
+                        </span>
+                        <span className={results.winningResult?.id === result.id ? 'font-bold text-blue-600' : ''}>
+                          {results.scores[result.id] || 0} points
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold">Answer by Answer Breakdown:</h4>
+                  {results.answerBreakdown.map((item, index) => (
+                    <div key={index} className="p-4 border border-gray-200 rounded space-y-2">
+                      <h5 className="font-medium">Q{index + 1}: {item.question}</h5>
+                      <p className="text-blue-600">Your answer: {item.selectedAnswer}</p>
+                      <div className="text-sm text-gray-600">
+                        Points awarded: {Object.entries(item.pointsAwarded).map(([result, points]) => 
+                          `${result}: +${points}`
+                        ).join(', ')}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>
