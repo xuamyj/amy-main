@@ -93,11 +93,25 @@
   transform: translateY(-1px);
 }
 
+/* Dragon image styling */
+.solstra-dragon-image {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .solstra-dragon-image {
+    max-width: 200px;
+  }
+}
+
 /* Food slot visualization */
 .solstra-food-slot {
-  width: 60px;
-  height: 20px;
-  border-radius: 10px;
+  width: 20px;
+  height: 12px;
+  border-radius: 10%;
   border: 2px solid #cbd5e1;
   transition: all 0.2s ease-in-out;
 }

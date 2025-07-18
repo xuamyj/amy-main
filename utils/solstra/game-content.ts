@@ -58,3 +58,11 @@ export function getRandomSolisStatusLine(): string {
   const lines = characterLines.SOLIS_STATUS_LINES
   return lines[Math.floor(Math.random() * lines.length)]
 }
+
+/**
+ * Get Solis status line by index (for hourly changes)
+ */
+export function getSolisStatusLineByIndex(index: number): string {
+  const lines = characterLines.SOLIS_STATUS_LINES
+  return lines[index % lines.length]
+}

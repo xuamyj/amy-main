@@ -6,6 +6,8 @@ export interface DragonState {
   user_id?: string
   food_slots: number
   last_slot_increase: string
+  status_line_index?: number
+  last_status_change?: string
   created_at?: string
   updated_at?: string
 }
@@ -63,7 +65,9 @@ export async function getDragonState(supabase: SupabaseClient, userId: string): 
     const initialState: DragonState = {
       user_id: userId,
       food_slots: 3, // Start with full food slots
-      last_slot_increase: new Date().toISOString()
+      last_slot_increase: new Date().toISOString(),
+      status_line_index: 0,
+      last_status_change: new Date().toISOString()
     }
 
     const { data: newData, error: insertError } = await supabase
@@ -102,21 +106,26 @@ export function calculateCurrentFoodSlots(dragonState: DragonState): {
 }
 
 /**
- * Update dragon state with new food slot count
+ * Update dragon state with new food slot count (preserves timing)
  */
 export async function updateDragonFoodSlots(
   supabase: SupabaseClient, 
   userId: string, 
-  newSlots: number
+  newSlots: number,
+  preserveTiming: boolean = false
 ): Promise<DragonState> {
-  const now = new Date().toISOString()
+  const updateData: any = {
+    food_slots: newSlots
+  }
+  
+  // Only update timing if not preserving (for debug functions)
+  if (!preserveTiming) {
+    updateData.last_slot_increase = new Date().toISOString()
+  }
   
   const { data, error } = await supabase
     .from('solstra_dragon_state')
-    .update({
-      food_slots: newSlots,
-      last_slot_increase: now
-    })
+    .update(updateData)
     .eq('user_id', userId)
     .select('*')
     .single()
@@ -126,7 +135,7 @@ export async function updateDragonFoodSlots(
 }
 
 /**
- * Feed the dragon (reduce food slots by 1)
+ * Feed the dragon (reduce food slots by 1, preserves timing)
  */
 export async function feedDragon(supabase: SupabaseClient, userId: string): Promise<DragonState> {
   const dragonState = await getDragonState(supabase, userId)
@@ -136,7 +145,7 @@ export async function feedDragon(supabase: SupabaseClient, userId: string): Prom
     throw new Error("No food slots available")
   }
 
-  return updateDragonFoodSlots(supabase, userId, currentSlots - 1)
+  return updateDragonFoodSlots(supabase, userId, currentSlots - 1, true)
 }
 
 /**
@@ -221,6 +230,41 @@ export async function resetTodayVillagerHarvests(
     .eq('harvest_date', today)
 
   if (error) throw error
+}
+
+/**
+ * Get current status line index, updating if an hour has passed
+ */
+export async function getCurrentStatusIndex(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<{ statusIndex: number; shouldUpdate: boolean }> {
+  const dragonState = await getDragonState(supabase, userId)
+  
+  const lastStatusChange = dragonState.last_status_change ? 
+    new Date(dragonState.last_status_change) : new Date()
+  const now = new Date()
+  const hoursSinceLastChange = (now.getTime() - lastStatusChange.getTime()) / (1000 * 60 * 60)
+  
+  if (hoursSinceLastChange >= 1) {
+    // Update to new status index
+    const newIndex = (dragonState.status_line_index || 0) + 1
+    
+    const { data, error } = await supabase
+      .from('solstra_dragon_state')
+      .update({
+        status_line_index: newIndex,
+        last_status_change: now.toISOString()
+      })
+      .eq('user_id', userId)
+      .select('status_line_index')
+      .single()
+
+    if (error) throw error
+    return { statusIndex: data.status_line_index, shouldUpdate: true }
+  }
+  
+  return { statusIndex: dragonState.status_line_index || 0, shouldUpdate: false }
 }
 
 /**

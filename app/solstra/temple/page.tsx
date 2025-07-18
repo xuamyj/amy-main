@@ -7,10 +7,13 @@ import {
   getDragonState, 
   calculateCurrentFoodSlots, 
   feedDragon,
+  getCurrentStatusIndex,
   DragonState,
   FOOD_SLOTS_MAX 
 } from "@/utils/supabase/solstra/helpers";
-import { getRandomSolisStatusLine } from "@/utils/solstra/game-content";
+import { getSolisStatusLineByIndex } from "@/utils/solstra/game-content";
+import Image from "next/image";
+import solisImage from "../game-content/catdragon-solis-placeholder300.png";
 
 export default function TemplePage() {
   const [dragonState, setDragonState] = useState<DragonState | null>(null);
@@ -42,11 +45,12 @@ export default function TemplePage() {
     try {
       const state = await getDragonState(supabase, userId);
       const { currentSlots: slots, timeUntilNext: timeNext } = calculateCurrentFoodSlots(state);
+      const { statusIndex, shouldUpdate } = await getCurrentStatusIndex(supabase, userId);
       
       setDragonState(state);
       setCurrentSlots(slots);
       setTimeUntilNext(timeNext);
-      setDragonStatus(getRandomSolisStatusLine());
+      setDragonStatus(getSolisStatusLineByIndex(statusIndex));
     } catch (error) {
       console.error("Error loading dragon state:", error);
     } finally {
@@ -61,8 +65,7 @@ export default function TemplePage() {
     setFeeding(true);
     try {
       await feedDragon(supabase, userId);
-      await loadDragonState(); // Reload state
-      setDragonStatus(getRandomSolisStatusLine()); // New status after feeding
+      await loadDragonState(); // Reload state (preserves status timing)
     } catch (error) {
       console.error("Error feeding dragon:", error);
     } finally {
@@ -125,7 +128,18 @@ export default function TemplePage() {
       
       {/* Dragon Status */}
       <div className="solstra-card mb-6 w-full max-w-2xl">
-        <h2 className="text-xl font-semibold mb-3">Solis the Dragon</h2>
+        <h2 className="text-xl font-semibold mb-4">Solis the Dragon</h2>
+        
+        {/* Dragon Image */}
+        <div className="flex justify-center mb-4">
+          <Image
+            src={solisImage}
+            alt="Solis the Dragon"
+            className="solstra-dragon-image"
+            priority
+          />
+        </div>
+        
         <p className="text-gray-700 mb-4">{dragonStatus}</p>
         
         {/* Looking for Food Bar */}
