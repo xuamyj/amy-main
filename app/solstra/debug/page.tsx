@@ -7,6 +7,7 @@ import {
   debugAddFoodSlot,
   resetTodayVillagerHarvests,
   clearUserInventory,
+  clearUserFeedingLog,
   getDragonState,
   calculateCurrentFoodSlots
 } from "@/utils/supabase/solstra/helpers";
@@ -17,6 +18,7 @@ export default function DebugPage() {
   const [adding, setAdding] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [clearingFeedingLog, setClearingFeedingLog] = useState(false);
   const [dragonInfo, setDragonInfo] = useState<string>("");
 
   const supabase = createClient();
@@ -90,6 +92,22 @@ Dragon State:
       alert("Error clearing inventory");
     } finally {
       setClearing(false);
+    }
+  };
+
+  // Handle clearing feeding log
+  const handleClearFeedingLog = async () => {
+    if (!userId || clearingFeedingLog) return;
+
+    setClearingFeedingLog(true);
+    try {
+      await clearUserFeedingLog(supabase, userId);
+      alert("Cleared Solis's feeding log!");
+    } catch (error) {
+      console.error("Error clearing feeding log:", error);
+      alert("Error clearing feeding log");
+    } finally {
+      setClearingFeedingLog(false);
     }
   };
 
@@ -185,6 +203,21 @@ Dragon State:
             className="solstra-btn-small"
           >
             {clearing ? "Clearing..." : "Clear All Inventory"}
+          </button>
+        </div>
+
+        {/* Feeding Log Controls */}
+        <div className="solstra-card">
+          <h2 className="text-xl font-semibold mb-3 solstra-header-section">Feeding Log Controls</h2>
+          <p className="solstra-text mb-4">
+            Clear Solis's feeding log. This will reset all foods to "not tasted" so you can experience first-time feeding messages again.
+          </p>
+          <button
+            onClick={handleClearFeedingLog}
+            disabled={clearingFeedingLog}
+            className="solstra-btn-small"
+          >
+            {clearingFeedingLog ? "Clearing..." : "Clear Feeding Log"}
           </button>
         </div>
 

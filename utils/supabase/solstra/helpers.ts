@@ -30,8 +30,32 @@ export interface InventoryItem {
   created_at?: string
 }
 
+export interface FeedingLogEntry {
+  id?: number
+  user_id?: string
+  food_name: string
+  first_tasted_at?: string
+  created_at?: string
+}
+
 // Character names from the game content
 export const VILLAGER_NAMES = ["Ajax", "Leonidas", "Banner", "Lana", "Sapphira", "Tessa"]
+
+// All possible foods that Solis can taste (in character order)
+export const ALL_FOODS = [
+  // Ajax (liquids)
+  "Honey", "Wine", "Vinegar", "Olive Oil",
+  // Tessa (flour/vegetables) 
+  "Flour", "Celery", "Corn", "Tomato", "Zucchini", "Onion", "Bell Pepper", "Eggplant",
+  // Banner (fruits)
+  "Orange", "Strawberry", "Lemon", "Apple", "Grape", "Pomegranate",
+  // Leonidas (fish)
+  "Fish",
+  // Sapphira (herbs)
+  "Laurel", "Mint", "Oregano", "Dill", "Parsley", "Basil", "Rosemary", "Garlic",
+  // Lana (flowers)
+  "Crocus", "Chaste-Flower", "Myrtle", "Rose", "Morning Glory", "Poppy", "Amaranth", "Asphodel"
+]
 
 // Dragon feeding mechanics
 export const FOOD_SLOTS_MAX = 3
@@ -448,6 +472,83 @@ export async function clearUserInventory(
 ): Promise<void> {
   const { error } = await supabase
     .from('solstra_user_inventory')
+    .delete()
+    .eq('user_id', userId)
+
+  if (error) throw error
+}
+
+/**
+ * Check if Solis has tasted a specific food
+ */
+export async function hasTastedFood(
+  supabase: SupabaseClient,
+  userId: string,
+  foodName: string
+): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('solstra_feeding_log')
+    .select('food_name')
+    .eq('user_id', userId)
+    .eq('food_name', foodName)
+    .single()
+
+  if (error && error.code !== 'PGRST116') throw error
+  return !!data
+}
+
+/**
+ * Record that Solis has tasted a new food
+ */
+export async function recordFoodTasted(
+  supabase: SupabaseClient,
+  userId: string,
+  foodName: string
+): Promise<FeedingLogEntry> {
+  const { data, error } = await supabase
+    .from('solstra_feeding_log')
+    .insert({
+      user_id: userId,
+      food_name: foodName
+    })
+    .select('*')
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+/**
+ * Get user's complete feeding log with all foods
+ */
+export async function getUserFeedingLog(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<{ food_name: string; has_tasted: boolean }[]> {
+  const { data, error } = await supabase
+    .from('solstra_feeding_log')
+    .select('food_name')
+    .eq('user_id', userId)
+
+  if (error) throw error
+  
+  const tastedFoods = new Set(data?.map(entry => entry.food_name) || [])
+  
+  return ALL_FOODS.map(food => ({
+    food_name: food,
+    has_tasted: tastedFoods.has(food)
+  }))
+}
+
+/**
+ * Clear user's feeding log (debug function)
+ */
+export async function clearUserFeedingLog(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('solstra_feeding_log')
     .delete()
     .eq('user_id', userId)
 

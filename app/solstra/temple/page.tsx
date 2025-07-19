@@ -10,6 +10,8 @@ import {
   getCurrentStatusIndex,
   getUserInventorySorted,
   removeItemFromInventory,
+  hasTastedFood,
+  recordFoodTasted,
   DragonState,
   FOOD_SLOTS_MAX 
 } from "@/utils/supabase/solstra/helpers";
@@ -134,11 +136,25 @@ export default function TemplePage() {
     setInventorySelectionModal(prev => ({ ...prev, isLoading: true }));
     
     try {
+      // Check if this is the first time Solis has tasted this food
+      const hasAlreadyTasted = await hasTastedFood(supabase, userId, itemName);
+      
       // Remove item from inventory
       await removeItemFromInventory(supabase, userId, itemName);
       
       // Feed the dragon
       await feedDragon(supabase, userId);
+      
+      let feedingLine: string;
+      
+      if (!hasAlreadyTasted) {
+        // First time tasting this food - record it and use special message
+        await recordFoodTasted(supabase, userId, itemName);
+        feedingLine = `Solis tried ${itemName} for the first time, and liked it!`;
+      } else {
+        // Regular feeding - use random line
+        feedingLine = getRandomSolisFeedingLine();
+      }
       
       // Reload state and inventory
       await loadDragonState();
@@ -146,8 +162,7 @@ export default function TemplePage() {
       // Hide inventory selection modal
       hideInventorySelection();
       
-      // Show feeding modal with random line
-      const feedingLine = getRandomSolisFeedingLine();
+      // Show feeding modal with appropriate message
       showFeedingModal(feedingLine);
     } catch (error) {
       console.error("Error feeding dragon:", error);

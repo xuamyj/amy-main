@@ -3,24 +3,30 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { getUserId } from "@/utils/supabase/amy/helpers";
-import { getUserInventorySorted } from "@/utils/supabase/solstra/helpers";
+import { getUserInventorySorted, getUserFeedingLog } from "@/utils/supabase/solstra/helpers";
 
 export default function HousePage() {
   const [inventory, setInventory] = useState<{ item_name: string; count: number; received_from: string }[]>([]);
+  const [feedingLog, setFeedingLog] = useState<{ food_name: string; has_tasted: boolean }[]>([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
 
   const supabase = createClient();
 
-  // Load user inventory
-  const loadInventory = async () => {
+  // Load user data
+  const loadUserData = async () => {
     if (!userId) return;
     
     try {
-      const userInventory = await getUserInventorySorted(supabase, userId);
+      const [userInventory, userFeedingLog] = await Promise.all([
+        getUserInventorySorted(supabase, userId),
+        getUserFeedingLog(supabase, userId)
+      ]);
+      
       setInventory(userInventory);
+      setFeedingLog(userFeedingLog);
     } catch (error) {
-      console.error("Error loading inventory:", error);
+      console.error("Error loading user data:", error);
     } finally {
       setLoading(false);
     }
@@ -41,10 +47,10 @@ export default function HousePage() {
     initializeUser();
   }, []);
 
-  // Load inventory when user is set
+  // Load user data when user is set
   useEffect(() => {
     if (userId) {
-      loadInventory();
+      loadUserData();
     }
   }, [userId]);
 
@@ -86,6 +92,35 @@ export default function HousePage() {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Feeding Log Section */}
+      <div className="solstra-card w-full max-w-2xl">
+        <h2 className="text-xl font-semibold mb-4 solstra-header-section">Feeding Log</h2>
+        <p className="solstra-text-sm mb-4">
+          Foods that Solis has tasted. Darker items have been tasted, lighter ones haven't.
+        </p>
+        
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+          {feedingLog.map((food, index) => (
+            <div 
+              key={index} 
+              className="text-center p-2 rounded border border-blue-200"
+              style={{ 
+                backgroundColor: food.has_tasted ? '#ffffff' : '#ebeced',
+                color: food.has_tasted ? '#4b5563' : '#a3adc2'
+              }}
+            >
+              <div style={{ 
+                fontSize: '1rem', 
+                fontWeight: 400,
+                color: 'inherit'
+              }}>
+                {food.food_name}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

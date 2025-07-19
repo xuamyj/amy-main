@@ -296,31 +296,54 @@ Solstra is a peaceful sky-land game featuring dragon care, villager interactions
 - Character-specific dialogue lines for greetings and harvests
 - Standing behavior descriptions for ambient life
 
-**Resource Management:**
-- Items: honey (Ajax), fish (Leonidas), fruits (Banner), flowers (Lana), herbs (Sapphira), vegetables (Tessa)
-- Harvest modals show item received with character attribution
-- All resources fed to Solis for care and growth
+**Inventory System:**
+- Complete inventory tracking system with database storage
+- Items stored individually with timestamps and source attribution
+- Inventory display in House tab with proper ordering and quantities
+- Item ordering follows character sequence: Ajax (liquids) → Tessa (flour/vegetables) → Banner (fruits) → Leonidas (fish) → Sapphira (herbs) → Lana (flowers)
+- Items removed from inventory when fed to Solis (FIFO system)
+
+**Feeding Log System:**
+- Tracks all 30 possible foods Solis can taste (complete list in `ALL_FOODS` constant)
+- Visual progress tracking: white background + dark text for tasted foods, light gray background + light text for untasted
+- First-time feeding shows special message: "Solis tried [food] for the first time, and liked it!"
+- Subsequent feedings use random lines from `SOLIS_FEEDING_LINES`
+- Complete feeding log display in House tab organized by character harvest order
+
+**Interactive Feeding Flow:**
+- Temple feeding now requires actual inventory items
+- Inventory selection modal shows available items with hover effects (light yellow)
+- Creates meaningful gameplay loop: harvest → store → feed → discover
 
 ### Technical Architecture
 
 **Database Schema:**
 - `solstra_dragon_state` - Dragon status, food slots, timing data
 - `solstra_villager_harvests` - Daily harvest tracking per user/villager
+- `solstra_user_inventory` - Individual item storage with timestamps and source tracking
+- `solstra_feeding_log` - Foods Solis has tasted with first-tasted timestamps
 - Uses Eastern Time for consistent day boundaries
 - Integer date formats (YYYYMMDD) for efficient querying
+- RLS policies ensure user data isolation across all tables
 
 **Key Components:**
 - `CharacterName.tsx` - Styled character name rendering
 - `DialogueBox.tsx` - Character interaction modal
 - `HarvestModal.tsx` - Item collection feedback  
 - `FeedingModal.tsx` - Dragon feeding confirmation
+- `InventorySelectionModal.tsx` - Interactive item selection for feeding with hover effects
 
 **Helper Functions** (`utils/supabase/solstra/helpers.ts`):
 - `feedDragon()` - Handle feeding with timer logic
 - `calculateCurrentFoodSlots()` - Real-time slot calculation
 - `getDragonState()` - Fetch/create dragon data
 - `hasHarvestedFromVillager()` - Daily harvest tracking
-- Dragon status and villager harvest management
+- `addItemToInventory()` / `removeItemFromInventory()` - Inventory management
+- `getUserInventorySorted()` - Get inventory with proper character-based ordering
+- `hasTastedFood()` / `recordFoodTasted()` - Feeding log tracking
+- `getUserFeedingLog()` - Complete feeding progress with visual state data
+- `clearUserInventory()` / `clearUserFeedingLog()` - Debug functions
+- `ALL_FOODS` constant - Complete list of 30 feedable items in character order
 
 **Game Content** (`utils/solstra/game-content.ts`):
 - Character dialogue lines stored in JSON
@@ -337,3 +360,30 @@ Solstra is a peaceful sky-land game featuring dragon care, villager interactions
 - Scoped styling prevents conflicts with other application sections
 - All text uses custom CSS classes for consistent theming
 - Modal system designed for mobile-first interaction patterns
+
+**Custom Font Integration:**
+- Abaddon Light/Bold fonts loaded via `@font-face` in scoped CSS
+- Font weights: 400 (Light) for regular text, 700 (Bold) for headers and `<strong>` tags
+- Font files stored in `public/fonts/` directory for Next.js static serving
+- Font scaling handled by individual font-size increases rather than global scaling
+
+**CSS Styling Patterns:**
+- Scoped CSS with `.solstra-container` wrapper prevents style leaking
+- Custom properties and component-based class naming (`.solstra-btn`, `.solstra-card`)
+- Color inheritance issues: CSS classes with `color` properties override inline styles
+- Solution: Use `color: 'inherit'` in child elements or remove conflicting classes
+- Hover effects with light yellow (`#fef9c3`) for interactive inventory items
+
+**Database Architecture Patterns:**
+- Individual item storage (not just counts) enables FIFO removal and rich metadata
+- Unique constraints prevent duplicate entries (user + food combination)
+- Timestamp tracking for both receiving items and first-time experiences
+- JSONB storage avoided in favor of relational tables for better querying and type safety
+- RLS policies consistent across all game tables for user data isolation
+
+**Tab Organization & User Flow:**
+- **Temple (Home)**: Dragon care and feeding (requires inventory)
+- **House**: Inventory viewing and feeding log progress tracking  
+- **Town**: Harvesting and villager interaction (generates inventory)
+- **Debug**: Testing tools for all game systems without waiting for timers
+- Logical progression creates engaging gameplay loop encouraging exploration
