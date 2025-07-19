@@ -244,7 +244,7 @@ export default function TemplePage() {
         {/* Looking for Food Bar */}
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="font-medium">Looking for food</span>
+            <span className="font-medium">{currentSlots === 0 ? "Not hungry" : "Looking for food"}</span>
             <span className="solstra-no-italic-hint">
               {currentSlots < FOOD_SLOTS_MAX && timeUntilNext > 0 && 
                 `Next in ${formatTimeRemaining(timeUntilNext)}`

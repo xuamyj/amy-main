@@ -28,8 +28,8 @@ export default function Login({
 
     // return redirect("/protected");
 
-    // Amy: Lebre is the only app for now, so go there when you sign in
-    return redirect("/lebre");
+    // Amy: Solstra is the main app now, so go there when you sign in
+    return redirect("/solstra");
   };
 
   const signUp = async (formData: FormData) => {

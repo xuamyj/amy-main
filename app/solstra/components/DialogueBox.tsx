@@ -17,6 +17,18 @@ export default function DialogueBox({ characterName, text, onDismiss }: Dialogue
     onDismiss();
   };
 
+  // Process text to italicize underscored sections
+  const processText = (text: string) => {
+    const parts = text.split(/(_[^_]+_)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('_') && part.endsWith('_')) {
+        const content = part.slice(1, -1); // Remove the underscores
+        return <em key={index}>{content}</em>;
+      }
+      return part;
+    });
+  };
+
   return (
     <div className="solstra-dialogue-overlay" onClick={handleOverlayClick}>
       <div className="solstra-dialogue-box" onClick={handleContentClick}>
@@ -24,7 +36,7 @@ export default function DialogueBox({ characterName, text, onDismiss }: Dialogue
           <CharacterName name={characterName} />
         </div>
         <div className="solstra-dialogue-text">
-          "{text}"
+          "{processText(text)}"
         </div>
         <div className="solstra-dialogue-hint">
           Tap anywhere to continue

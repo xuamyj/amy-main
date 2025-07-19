@@ -28,7 +28,7 @@ export default function Login({
 
     // return redirect("/protected");
 
-    // Amy: Lebre is the only app for now, so go there when you sign in
+    // Amy: This hiddenlogin is specifically for todo list, so should still redirect to Lebre
     return redirect("/lebre");
   };
 
