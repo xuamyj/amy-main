@@ -4,8 +4,7 @@ import { SupabaseClient } from '@supabase/supabase-js'
 export interface DragonState {
   id?: number
   user_id?: string
-  food_slots: number
-  last_slot_increase: string
+  hunger_time_marker: string
   status_line_index?: number
   last_status_change?: string
   created_at?: string
@@ -94,13 +93,15 @@ export async function getDragonState(supabase: SupabaseClient, userId: string): 
   }
 
   if (!data) {
-    // Create initial state if none exists
+    // Create initial state if none exists - TM set to current_time - 24h for 3 available eats
+    const now = new Date()
+    const initialTimeMarker = new Date(now.getTime() - (24 * 60 * 60 * 1000))
+    
     const initialState: DragonState = {
       user_id: userId,
-      food_slots: 3, // Start with full food slots
-      last_slot_increase: new Date().toISOString(),
+      hunger_time_marker: initialTimeMarker.toISOString(),
       status_line_index: 0,
-      last_status_change: new Date().toISOString()
+      last_status_change: now.toISOString()
     }
 
     const { data: newData, error: insertError } = await supabase
@@ -117,48 +118,57 @@ export async function getDragonState(supabase: SupabaseClient, userId: string): 
 }
 
 /**
- * Calculate current food slots based on time elapsed
+ * Calculate current food slots based on Time Marker (TM) system
+ * TM+24h+ = 3 slots, TM+16h-24h = 2 slots, TM+8h-16h = 1 slot, TM+0h-8h = 0 slots
  */
 export function calculateCurrentFoodSlots(dragonState: DragonState): {
   currentSlots: number
   timeUntilNext: number // milliseconds until next slot
 } {
-  const lastIncrease = new Date(dragonState.last_slot_increase)
+  const timeMarker = new Date(dragonState.hunger_time_marker)
   const now = new Date()
-  const timeDiff = now.getTime() - lastIncrease.getTime()
-  const hoursElapsed = timeDiff / (1000 * 60 * 60)
+  const hoursFromTM = (now.getTime() - timeMarker.getTime()) / (1000 * 60 * 60)
   
-  const slotsToAdd = Math.floor(hoursElapsed / HOURS_PER_SLOT)
-  const currentSlots = Math.min(dragonState.food_slots + slotsToAdd, FOOD_SLOTS_MAX)
+  let currentSlots: number
+  let nextSlotAtHours: number // hours from TM when next slot becomes available
   
-  // Calculate time until next slot increase
-  const hoursUntilNext = HOURS_PER_SLOT - (hoursElapsed % HOURS_PER_SLOT)
-  const timeUntilNext = hoursUntilNext * 60 * 60 * 1000
+  if (hoursFromTM >= 24) {
+    currentSlots = 3
+    nextSlotAtHours = 24 // Already at max, next "slot" would be at 24h (but we're already past it)
+  } else if (hoursFromTM >= 16) {
+    currentSlots = 2
+    nextSlotAtHours = 24 // Next slot at TM+24h
+  } else if (hoursFromTM >= 8) {
+    currentSlots = 1
+    nextSlotAtHours = 16 // Next slot at TM+16h
+  } else {
+    currentSlots = 0
+    nextSlotAtHours = 8 // Next slot at TM+8h
+  }
+  
+  // Calculate time until next slot (only meaningful if not at max)
+  let timeUntilNext = 0
+  if (currentSlots < 3) {
+    const hoursUntilNext = nextSlotAtHours - hoursFromTM
+    timeUntilNext = hoursUntilNext * 60 * 60 * 1000
+  }
 
   return { currentSlots, timeUntilNext }
 }
 
 /**
- * Update dragon state with new food slot count (preserves timing)
+ * Update dragon state with new Time Marker (TM)
  */
-export async function updateDragonFoodSlots(
+export async function updateDragonTimeMarker(
   supabase: SupabaseClient, 
   userId: string, 
-  newSlots: number,
-  preserveTiming: boolean = false
+  newTimeMarker: Date
 ): Promise<DragonState> {
-  const updateData: any = {
-    food_slots: newSlots
-  }
-  
-  // Only update timing if not preserving (for debug functions)
-  if (!preserveTiming) {
-    updateData.last_slot_increase = new Date().toISOString()
-  }
-  
   const { data, error } = await supabase
     .from('solstra_dragon_state')
-    .update(updateData)
+    .update({
+      hunger_time_marker: newTimeMarker.toISOString()
+    })
     .eq('user_id', userId)
     .select('*')
     .single()
@@ -168,7 +178,10 @@ export async function updateDragonFoodSlots(
 }
 
 /**
- * Feed the dragon (reduce food slots by 1, resets timer only when going from 3->2 slots)
+ * Feed the dragon using Time Marker (TM) system
+ * 3→2: TM = current_time - 16h (resets timer)
+ * 2→1: TM = TM + 8h (preserves timing)  
+ * 1→0: TM = TM + 8h (preserves timing)
  */
 export async function feedDragon(supabase: SupabaseClient, userId: string): Promise<DragonState> {
   const dragonState = await getDragonState(supabase, userId)
@@ -178,16 +191,19 @@ export async function feedDragon(supabase: SupabaseClient, userId: string): Prom
     throw new Error("No food slots available")
   }
 
-  const newSlots = currentSlots - 1
-  const shouldResetTimer = currentSlots === 3 // Reset timer only when going from 3->2
-  
-  // First, sync the database with current calculated slots if they differ
-  if (dragonState.food_slots !== currentSlots) {
-    await updateDragonFoodSlots(supabase, userId, currentSlots, true) // Sync without resetting timer
+  const currentTime = new Date()
+  const currentTM = new Date(dragonState.hunger_time_marker)
+  let newTimeMarker: Date
+
+  if (currentSlots === 3) {
+    // 3→2: Reset timer - set TM to current_time - 16h
+    newTimeMarker = new Date(currentTime.getTime() - (16 * 60 * 60 * 1000))
+  } else {
+    // 2→1 or 1→0: Preserve timing - set TM to TM + 8h
+    newTimeMarker = new Date(currentTM.getTime() + (8 * 60 * 60 * 1000))
   }
   
-  // Then perform the feeding
-  return updateDragonFoodSlots(supabase, userId, newSlots, !shouldResetTimer)
+  return updateDragonTimeMarker(supabase, userId, newTimeMarker)
 }
 
 /**
@@ -318,7 +334,7 @@ export async function getCurrentStatusIndex(
 }
 
 /**
- * Debug function to manually add a food slot
+ * Debug function to manually add a food slot by shifting TM back 8 hours
  */
 export async function debugAddFoodSlot(
   supabase: SupabaseClient,
@@ -326,9 +342,17 @@ export async function debugAddFoodSlot(
 ): Promise<DragonState> {
   const dragonState = await getDragonState(supabase, userId)
   const { currentSlots } = calculateCurrentFoodSlots(dragonState)
-  const newSlots = Math.min(currentSlots + 1, FOOD_SLOTS_MAX)
   
-  return updateDragonFoodSlots(supabase, userId, newSlots)
+  // If already at max, no change needed
+  if (currentSlots >= FOOD_SLOTS_MAX) {
+    return dragonState
+  }
+  
+  // Simple: TM = TM - 8h to add one slot level
+  const currentTM = new Date(dragonState.hunger_time_marker)
+  const newTimeMarker = new Date(currentTM.getTime() - (8 * 60 * 60 * 1000))
+  
+  return updateDragonTimeMarker(supabase, userId, newTimeMarker)
 }
 
 /**

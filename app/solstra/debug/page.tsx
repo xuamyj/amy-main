@@ -31,12 +31,16 @@ export default function DebugPage() {
       const dragonState = await getDragonState(supabase, userId);
       const { currentSlots, timeUntilNext } = calculateCurrentFoodSlots(dragonState);
       
+      const hoursFromTM = (new Date().getTime() - new Date(dragonState.hunger_time_marker).getTime()) / (1000 * 60 * 60);
+      
       const info = `
 Dragon State:
+- Time Marker (TM): ${new Date(dragonState.hunger_time_marker).toLocaleString()}
+- Hours from TM: ${hoursFromTM.toFixed(1)}h
 - Current food slots: ${currentSlots}/3
-- Database food slots: ${dragonState.food_slots}
-- Last slot increase: ${new Date(dragonState.last_slot_increase).toLocaleString()}
-- Time until next slot: ${Math.round(timeUntilNext / (1000 * 60))} minutes
+- Time until next slot: ${timeUntilNext > 0 ? Math.round(timeUntilNext / (1000 * 60)) + ' minutes' : 'At maximum'}
+- Status line index: ${dragonState.status_line_index || 0}
+- Last status change: ${dragonState.last_status_change ? new Date(dragonState.last_status_change).toLocaleString() : 'Never'}
       `.trim();
       
       setDragonInfo(info);

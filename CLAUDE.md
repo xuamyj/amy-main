@@ -285,8 +285,14 @@ Solstra is a peaceful sky-land game featuring dragon care, villager interactions
 ### Game Mechanics
 
 **Dragon Care System:**
-- Solis has food slots that deplete over time (8 hours per slot, max 3 slots)
-- Feeding timer logic: 3→2 slots resets timer (starts new 8-hour cycle), 2→1 and 1→0 preserve existing timing (continues current cycle)
+- Solis uses Time Marker (TM) hunger system with 4 phases:
+  - `current_time > TM+24h`: 3 food slots available
+  - `TM+16h ≤ current_time ≤ TM+24h`: 2 food slots available  
+  - `TM+8h ≤ current_time ≤ TM+16h`: 1 food slot available
+  - `current_time < TM+8h`: 0 food slots available
+- Feeding logic preserves player timing investment:
+  - **3→2 feeding**: `TM = current_time - 16h` (resets timer)
+  - **2→1 and 1→0 feeding**: `TM = TM + 8h` (preserves existing timing)
 - Status lines change hourly for variety
 - Feeding shows random appreciation messages
 
@@ -375,6 +381,7 @@ Solstra is a peaceful sky-land game featuring dragon care, villager interactions
 - Hover effects with light yellow (`#fef9c3`) for interactive inventory items
 
 **Database Architecture Patterns:**
+- **Time Marker (TM) System**: Single `hunger_time_marker` timestamp replaces complex slot tracking - hunger always computable from time difference
 - Individual item storage (not just counts) enables FIFO removal and rich metadata
 - Unique constraints prevent duplicate entries (user + food combination)
 - Timestamp tracking for both receiving items and first-time experiences
