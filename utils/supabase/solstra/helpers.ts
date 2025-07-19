@@ -410,6 +410,36 @@ export async function getUserInventorySorted(
 }
 
 /**
+ * Remove one item from user's inventory by item name
+ */
+export async function removeItemFromInventory(
+  supabase: SupabaseClient,
+  userId: string,
+  itemName: string
+): Promise<void> {
+  // Get the oldest item of this type to remove (FIFO)
+  const { data, error: selectError } = await supabase
+    .from('solstra_user_inventory')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('item_name', itemName)
+    .order('received_at', { ascending: true })
+    .limit(1)
+    .single()
+
+  if (selectError) throw selectError
+  if (!data) throw new Error(`No ${itemName} found in inventory`)
+
+  // Delete the specific item
+  const { error: deleteError } = await supabase
+    .from('solstra_user_inventory')
+    .delete()
+    .eq('id', data.id)
+
+  if (deleteError) throw deleteError
+}
+
+/**
  * Clear all items from user's inventory (debug function)
  */
 export async function clearUserInventory(

@@ -8,6 +8,8 @@ import {
   calculateCurrentFoodSlots, 
   feedDragon,
   getCurrentStatusIndex,
+  getUserInventorySorted,
+  removeItemFromInventory,
   DragonState,
   FOOD_SLOTS_MAX 
 } from "@/utils/supabase/solstra/helpers";
@@ -15,6 +17,7 @@ import { getSolisStatusLineByIndex, getRandomSolisFeedingLine } from "@/utils/so
 import Image from "next/image";
 import solisImage from "../game-content/catdragon-solis-placeholder300.png";
 import FeedingModal from "../components/FeedingModal";
+import InventorySelectionModal from "../components/InventorySelectionModal";
 
 export default function TemplePage() {
   const [dragonState, setDragonState] = useState<DragonState | null>(null);
@@ -24,6 +27,14 @@ export default function TemplePage() {
   const [feeding, setFeeding] = useState(false);
   const [dragonStatus, setDragonStatus] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
+  const [inventory, setInventory] = useState<{ item_name: string; count: number; received_from: string }[]>([]);
+  const [inventorySelectionModal, setInventorySelectionModal] = useState<{
+    isVisible: boolean;
+    isLoading: boolean;
+  }>({
+    isVisible: false,
+    isLoading: false
+  });
   const [feedingModal, setFeedingModal] = useState<{
     isVisible: boolean;
     feedingLine: string;
@@ -46,12 +57,16 @@ export default function TemplePage() {
     return `${minutes}m`;
   };
 
-  // Load dragon state
+  // Load dragon state and inventory
   const loadDragonState = async () => {
     if (!userId) return;
     
     try {
-      const state = await getDragonState(supabase, userId);
+      const [state, userInventory] = await Promise.all([
+        getDragonState(supabase, userId),
+        getUserInventorySorted(supabase, userId)
+      ]);
+      
       const { currentSlots: slots, timeUntilNext: timeNext } = calculateCurrentFoodSlots(state);
       const { statusIndex, shouldUpdate } = await getCurrentStatusIndex(supabase, userId);
       
@@ -59,11 +74,28 @@ export default function TemplePage() {
       setCurrentSlots(slots);
       setTimeUntilNext(timeNext);
       setDragonStatus(getSolisStatusLineByIndex(statusIndex));
+      setInventory(userInventory);
     } catch (error) {
       console.error("Error loading dragon state:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Show inventory selection modal
+  const showInventorySelection = () => {
+    setInventorySelectionModal({
+      isVisible: true,
+      isLoading: false
+    });
+  };
+
+  // Hide inventory selection modal
+  const hideInventorySelection = () => {
+    setInventorySelectionModal({
+      isVisible: false,
+      isLoading: false
+    });
   };
 
   // Show feeding modal
@@ -82,22 +114,46 @@ export default function TemplePage() {
     }));
   };
 
-  // Handle feeding the dragon
-  const handleFeedDragon = async () => {
+  // Handle feeding button click - show inventory selection
+  const handleFeedDragon = () => {
     if (!userId || currentSlots <= 0 || feeding) return;
     
-    setFeeding(true);
+    // Check if player has any items
+    if (inventory.length === 0) {
+      alert("You don't have any items to feed Solis! Visit the Town to harvest items from villagers.");
+      return;
+    }
+    
+    showInventorySelection();
+  };
+
+  // Handle item selection from inventory
+  const handleItemSelection = async (itemName: string) => {
+    if (!userId || inventorySelectionModal.isLoading) return;
+    
+    setInventorySelectionModal(prev => ({ ...prev, isLoading: true }));
+    
     try {
+      // Remove item from inventory
+      await removeItemFromInventory(supabase, userId, itemName);
+      
+      // Feed the dragon
       await feedDragon(supabase, userId);
-      await loadDragonState(); // Reload state (preserves status timing)
+      
+      // Reload state and inventory
+      await loadDragonState();
+      
+      // Hide inventory selection modal
+      hideInventorySelection();
       
       // Show feeding modal with random line
       const feedingLine = getRandomSolisFeedingLine();
       showFeedingModal(feedingLine);
     } catch (error) {
       console.error("Error feeding dragon:", error);
+      alert("Error feeding Solis. Please try again.");
     } finally {
-      setFeeding(false);
+      setInventorySelectionModal(prev => ({ ...prev, isLoading: false }));
     }
   };
 
@@ -194,15 +250,24 @@ export default function TemplePage() {
           {/* Feed button */}
           <button
             onClick={handleFeedDragon}
-            disabled={currentSlots <= 0 || feeding}
+            disabled={currentSlots <= 0}
             className={`solstra-btn ${currentSlots <= 0 ? 'disabled' : ''}`}
           >
-            {feeding ? "Feeding..." : 
-             currentSlots <= 0 ? "Solis isn't looking for food right now" :
+            {currentSlots <= 0 ? "Solis isn't looking for food right now" :
              `Feed Solis (${currentSlots} available)`}
           </button>
         </div>
       </div>
+
+      {/* Inventory Selection Modal */}
+      {inventorySelectionModal.isVisible && (
+        <InventorySelectionModal
+          inventory={inventory}
+          onSelectItem={handleItemSelection}
+          onCancel={hideInventorySelection}
+          isLoading={inventorySelectionModal.isLoading}
+        />
+      )}
 
       {/* Feeding Modal */}
       {feedingModal.isVisible && (
