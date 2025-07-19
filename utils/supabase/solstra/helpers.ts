@@ -269,7 +269,7 @@ export async function resetTodayVillagerHarvests(
 }
 
 /**
- * Get current status line index, updating if an hour has passed
+ * Get current status line index, updating exactly on the hour
  */
 export async function getCurrentStatusIndex(
   supabase: SupabaseClient,
@@ -280,9 +280,17 @@ export async function getCurrentStatusIndex(
   const lastStatusChange = dragonState.last_status_change ? 
     new Date(dragonState.last_status_change) : new Date()
   const now = new Date()
-  const hoursSinceLastChange = (now.getTime() - lastStatusChange.getTime()) / (1000 * 60 * 60)
   
-  if (hoursSinceLastChange >= 1) {
+  // Check if we've crossed an hour boundary (e.g., 2:59 -> 3:00)
+  const lastHour = lastStatusChange.getHours()
+  const currentHour = now.getHours()
+  const lastDay = lastStatusChange.getDate()
+  const currentDay = now.getDate()
+  
+  // Update if we're in a different hour, or if it's a new day
+  const shouldUpdate = (currentHour !== lastHour) || (currentDay !== lastDay)
+  
+  if (shouldUpdate) {
     // Update to new status index
     const newIndex = (dragonState.status_line_index || 0) + 1
     
