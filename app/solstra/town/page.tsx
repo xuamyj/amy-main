@@ -7,13 +7,16 @@ import {
   hasHarvestedFromVillager, 
   markVillagerHarvested,
   addItemToInventory,
-  VILLAGER_NAMES 
+  checkDailyFreebieUsed,
+  markDailyFreebieUsed,
+  getUntastedItemsForVillager
 } from "@/utils/supabase/solstra/helpers";
 import { 
   getRandomStandingLine,
   getRandomGreetingLine,
   getRandomHarvestLine,
-  getRandomHarvestItem
+  getSmartHarvestItem,
+  getRandomizedCharacterNames
 } from "@/utils/solstra/game-content";
 import DialogueBox from "../components/DialogueBox";
 import HarvestModal from "../components/HarvestModal";
@@ -64,7 +67,7 @@ export default function TownPage() {
     try {
       const villagerStates: VillagerState[] = [];
       
-      for (const name of VILLAGER_NAMES) {
+      for (const name of getRandomizedCharacterNames()) {
         const hasHarvested = await hasHarvestedFromVillager(supabase, userId, name);
         villagerStates.push({
           name,
@@ -134,8 +137,20 @@ export default function TownPage() {
       if (!hasHarvested) {
         // Mark as harvested and show harvest sequence
         await markVillagerHarvested(supabase, userId, villagerName);
-        const harvestItem = getRandomHarvestItem(villagerName);
+        
+        // Smart harvest logic with daily freebie system
+        const [untastedItems, hasUsedFreebie] = await Promise.all([
+          getUntastedItemsForVillager(supabase, userId, villagerName),
+          checkDailyFreebieUsed(supabase, userId)
+        ]);
+        
+        const harvestItem = getSmartHarvestItem(villagerName, untastedItems, hasUsedFreebie);
         const harvestLine = getRandomHarvestLine(villagerName);
+        
+        // If we used the smart logic to give a new item, mark freebie as used
+        if (untastedItems.length > 0 && !hasUsedFreebie && untastedItems.includes(harvestItem)) {
+          await markDailyFreebieUsed(supabase, userId, villagerName);
+        }
         
         // Add item to inventory
         await addItemToInventory(supabase, userId, harvestItem, villagerName);

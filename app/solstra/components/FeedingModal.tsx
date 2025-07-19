@@ -3,9 +3,10 @@
 interface FeedingModalProps {
   feedingLine: string;
   onDismiss: () => void;
+  title?: string;
 }
 
-export default function FeedingModal({ feedingLine, onDismiss }: FeedingModalProps) {
+export default function FeedingModal({ feedingLine, onDismiss, title = "✨ You fed Solis! ✨" }: FeedingModalProps) {
   const handleOverlayClick = () => {
     onDismiss();
   };
@@ -18,7 +19,7 @@ export default function FeedingModal({ feedingLine, onDismiss }: FeedingModalPro
     <div className="solstra-harvest-modal" onClick={handleOverlayClick}>
       <div className="solstra-harvest-modal-content" onClick={handleContentClick}>
         <div className="solstra-harvest-title">
-          ✨ You fed Solis! ✨
+          {title}
         </div>
         <div className="solstra-harvest-item">
           {feedingLine}

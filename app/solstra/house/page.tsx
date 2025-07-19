@@ -3,13 +3,19 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { getUserId } from "@/utils/supabase/amy/helpers";
-import { getUserInventorySorted, getUserFeedingLog } from "@/utils/supabase/solstra/helpers";
+import { getUserInventorySorted, getUserFeedingLog, shouldShowFeedingLogCelebration, markMilestoneNotified } from "@/utils/supabase/solstra/helpers";
+import FeedingModal from "../components/FeedingModal";
 
 export default function HousePage() {
   const [inventory, setInventory] = useState<{ item_name: string; count: number; received_from: string }[]>([]);
   const [feedingLog, setFeedingLog] = useState<{ food_name: string; has_tasted: boolean }[]>([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [celebrationModal, setCelebrationModal] = useState<{
+    isVisible: boolean;
+  }>({
+    isVisible: false
+  });
 
   const supabase = createClient();
 
@@ -18,17 +24,38 @@ export default function HousePage() {
     if (!userId) return;
     
     try {
-      const [userInventory, userFeedingLog] = await Promise.all([
+      const [userInventory, userFeedingLog, shouldCelebrate] = await Promise.all([
         getUserInventorySorted(supabase, userId),
-        getUserFeedingLog(supabase, userId)
+        getUserFeedingLog(supabase, userId),
+        shouldShowFeedingLogCelebration(supabase, userId)
       ]);
       
       setInventory(userInventory);
       setFeedingLog(userFeedingLog);
+      
+      // Show celebration if feeding log is complete and not previously notified
+      if (shouldCelebrate) {
+        setCelebrationModal({ isVisible: true });
+      }
     } catch (error) {
       console.error("Error loading user data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle celebration modal dismissal
+  const handleCelebrationDismiss = async () => {
+    if (!userId) return;
+    
+    try {
+      // Mark milestone as notified
+      await markMilestoneNotified(supabase, userId, 'feeding_log_complete');
+      setCelebrationModal({ isVisible: false });
+    } catch (error) {
+      console.error("Error marking milestone as notified:", error);
+      // Still dismiss the modal even if database update fails
+      setCelebrationModal({ isVisible: false });
     }
   };
 
@@ -122,6 +149,15 @@ export default function HousePage() {
           ))}
         </div>
       </div>
+
+      {/* Feeding Log Completion Celebration */}
+      {celebrationModal.isVisible && (
+        <FeedingModal
+          feedingLine="Solis is grateful and wants to eat all the foods again!"
+          onDismiss={handleCelebrationDismiss}
+          title="Solis completed her Feeding Log!"
+        />
+      )}
     </div>
   );
 }

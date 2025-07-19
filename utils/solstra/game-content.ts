@@ -45,10 +45,47 @@ export function getRandomHarvestItem(characterName: string): string {
 }
 
 /**
+ * Smart harvest item selection with daily freebie system
+ * If daily freebie not used and villager has untasted items: pick from untasted items
+ * Otherwise: pick randomly from all items
+ */
+export function getSmartHarvestItem(
+  characterName: string,
+  untastedItems: string[],
+  hasUsedDailyFreebie: boolean
+): string {
+  const allItems = namesAndThings.CHARACTER_HARVEST_ITEMS[characterName as keyof typeof namesAndThings.CHARACTER_HARVEST_ITEMS]
+  if (!allItems || allItems.length === 0) {
+    return "Something nice"
+  }
+
+  // If no untasted items or freebie already used, fall back to random
+  if (untastedItems.length === 0 || hasUsedDailyFreebie) {
+    return allItems[Math.floor(Math.random() * allItems.length)]
+  }
+  
+  // Give guaranteed new item (using daily freebie)
+  return untastedItems[Math.floor(Math.random() * untastedItems.length)]
+}
+
+/**
  * Get all character names
  */
 export function getAllCharacterNames(): string[] {
   return namesAndThings.CHARACTER_NAMES
+}
+
+/**
+ * Get all character names in randomized order
+ */
+export function getRandomizedCharacterNames(): string[] {
+  const names = [...namesAndThings.CHARACTER_NAMES]
+  // Fisher-Yates shuffle
+  for (let i = names.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [names[i], names[j]] = [names[j], names[i]]
+  }
+  return names
 }
 
 /**

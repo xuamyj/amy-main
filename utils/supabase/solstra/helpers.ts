@@ -568,3 +568,161 @@ export async function clearUserFeedingLog(
 
   if (error) throw error
 }
+
+// ============================================================================
+// MILESTONE NOTIFICATION FUNCTIONS
+// ============================================================================
+
+/**
+ * Check if a milestone has already been notified to the user
+ */
+export async function checkMilestoneNotified(
+  supabase: SupabaseClient,
+  userId: string,
+  milestoneType: string
+): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('solstra_milestone_notifs')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('milestone_type', milestoneType)
+    .maybeSingle()
+
+  if (error) throw error
+  return data !== null
+}
+
+/**
+ * Mark a milestone as notified for the user
+ */
+export async function markMilestoneNotified(
+  supabase: SupabaseClient,
+  userId: string,
+  milestoneType: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('solstra_milestone_notifs')
+    .insert({
+      user_id: userId,
+      milestone_type: milestoneType
+    })
+
+  if (error) throw error
+}
+
+/**
+ * Check if user has completed the feeding log (tasted all 30 foods)
+ */
+export async function checkFeedingLogComplete(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<boolean> {
+  const feedingLog = await getUserFeedingLog(supabase, userId)
+  return feedingLog.every(entry => entry.has_tasted)
+}
+
+/**
+ * Check if user should see the feeding log completion celebration
+ * Returns true if: feeding log is complete AND not previously notified
+ */
+export async function shouldShowFeedingLogCelebration(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<boolean> {
+  const isComplete = await checkFeedingLogComplete(supabase, userId)
+  if (!isComplete) return false
+  
+  const alreadyNotified = await checkMilestoneNotified(supabase, userId, 'feeding_log_complete')
+  return !alreadyNotified
+}
+
+// ============================================================================
+// DAILY FREEBIE SYSTEM
+// ============================================================================
+
+/**
+ * Check if user has used their daily freebie (guaranteed new item)
+ */
+export async function checkDailyFreebieUsed(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<boolean> {
+  const today = getCurrentEasternDate().toISOString().split('T')[0] // YYYY-MM-DD format
+  
+  const { data, error } = await supabase
+    .from('solstra_villager_harvests')
+    .select('daily_freebie_used')
+    .eq('user_id', userId)
+    .eq('harvest_date', today)
+    .eq('daily_freebie_used', true)
+    .maybeSingle()
+
+  if (error) throw error
+  return data !== null
+}
+
+/**
+ * Mark that user has used their daily freebie
+ */
+export async function markDailyFreebieUsed(
+  supabase: SupabaseClient,
+  userId: string,
+  villagerName: string
+): Promise<void> {
+  const today = getCurrentEasternDate().toISOString().split('T')[0] // YYYY-MM-DD format
+  
+  const { error } = await supabase
+    .from('solstra_villager_harvests')
+    .update({ daily_freebie_used: true })
+    .eq('user_id', userId)
+    .eq('villager_name', villagerName)
+    .eq('harvest_date', today)
+
+  if (error) throw error
+}
+
+/**
+ * Get items that a villager can provide that the player hasn't tasted yet
+ */
+export async function getUntastedItemsForVillager(
+  supabase: SupabaseClient,
+  userId: string,
+  villagerName: string
+): Promise<string[]> {
+  // Get what foods the user has already tasted
+  const { data: tastedData, error: tastedError } = await supabase
+    .from('solstra_feeding_log')
+    .select('food_name')
+    .eq('user_id', userId)
+
+  if (tastedError) throw tastedError
+  
+  const tastedFoods = new Set(tastedData.map(row => row.food_name))
+  
+  // Get items this villager can provide
+  const itemToCharacterMap: Record<string, string> = {
+    // Evander items (liquids)
+    "Honey": "Evander", "Wine": "Evander", "Vinegar": "Evander", "Olive Oil": "Evander",
+    // Tessa items (flour/vegetables) 
+    "Flour": "Tessa", "Celery": "Tessa", "Corn": "Tessa", "Tomato": "Tessa", 
+    "Zucchini": "Tessa", "Onion": "Tessa", "Bell Pepper": "Tessa", "Eggplant": "Tessa",
+    // Banner items (fruits)
+    "Orange": "Banner", "Strawberry": "Banner", "Lemon": "Banner", "Apple": "Banner", 
+    "Grape": "Banner", "Pomegranate": "Banner",
+    // Leonidas items (fish)
+    "Fish": "Leonidas",
+    // Sapphira items (herbs)
+    "Laurel": "Sapphira", "Mint": "Sapphira", "Oregano": "Sapphira", "Dill": "Sapphira", 
+    "Parsley": "Sapphira", "Basil": "Sapphira", "Rosemary": "Sapphira", "Garlic": "Sapphira",
+    // Lana items (flowers)
+    "Crocus": "Lana", "Chaste-Flower": "Lana", "Myrtle": "Lana", "Rose": "Lana", 
+    "Morning Glory": "Lana", "Poppy": "Lana", "Amaranth": "Lana", "Asphodel": "Lana"
+  }
+  
+  // Filter to items this villager provides that haven't been tasted
+  const villagerItems = ALL_FOODS.filter(food => 
+    itemToCharacterMap[food] === villagerName && !tastedFoods.has(food)
+  )
+  
+  return villagerItems
+}
