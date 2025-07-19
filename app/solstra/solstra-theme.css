@@ -1,5 +1,22 @@
 /* Solstra Section - Peaceful Sky-Land Theme */
 
+/* Custom Abaddon Font Family */
+@font-face {
+  font-family: 'Abaddon';
+  src: url('/fonts/Abaddon Light.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Abaddon';
+  src: url('/fonts/Abaddon Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 h1 {
   margin: 0;
 }
@@ -19,6 +36,7 @@ p {
 .solstra-container {
   min-height: 100vh;
   background: linear-gradient(to bottom, #c5dbfa 0%, #cff4ff 50%, #f8fafc 100%);
+  font-family: 'Abaddon', system-ui, -apple-system, sans-serif;
 }
 
 .solstra-nav-button {
@@ -27,7 +45,7 @@ p {
   justify-content: center;
   padding: 0.75rem 1.5rem;
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: 1rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
@@ -71,7 +89,7 @@ p {
   justify-content: center;
   padding: 0.75rem 1.5rem;
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: 1rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
@@ -100,7 +118,7 @@ p {
   justify-content: center;
   padding: 0.5rem 1rem;
   font-weight: 500;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   border-radius: 0.375rem;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
@@ -179,7 +197,7 @@ p {
   justify-content: center;
   padding: 0.375rem 0.75rem;
   font-weight: 500;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   border-radius: 0.25rem;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
@@ -230,19 +248,19 @@ p {
   font-weight: 600;
   color: #38bdf8;
   margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
 }
 
 .solstra-dialogue-text {
   color: #4b5563;
   line-height: 1.6;
-  font-size: 1rem;
+  font-size: 1.125rem;
 }
 
 .solstra-dialogue-hint {
   text-align: center;
   margin-top: 1rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: #a3adc2;
   font-style: italic;
 }
@@ -277,14 +295,14 @@ p {
 }
 
 .solstra-harvest-title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 600;
   color: #4b5563;
   margin-bottom: 1rem;
 }
 
 .solstra-harvest-item {
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   font-weight: 500;
   color: #4b5563;
   margin-bottom: 1rem;
@@ -295,32 +313,42 @@ p {
 }
 
 .solstra-no-italic-hint {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: #a3adc2;
 }
 
 /* Text styles */
 .solstra-text {
   color: #4b5563;
+  font-weight: 400; /* Uses Abaddon Light */
 }
 
 .solstra-text-sm {
   color: #4b5563;
-  font-size: 0.875rem;
+  font-size: 1rem;
+  font-weight: 400; /* Uses Abaddon Light */
 }
 
 .solstra-text-lg {
   color: #4b5563;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+  font-weight: 400; /* Uses Abaddon Light */
 }
 
 /* Header styles */
 .solstra-header-main {
   color: #4b5563;
+  font-weight: 700; /* Uses Abaddon Bold */
 }
 
 .solstra-header-section {
   color: #d97706;
+  font-weight: 700; /* Uses Abaddon Bold */
+}
+
+/* Bold text styling */
+.solstra-container strong {
+  font-weight: 700; /* Uses Abaddon Bold */
 }
 
 /* Animations */
