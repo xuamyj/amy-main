@@ -36,7 +36,7 @@ export default function DialogueBox({ characterName, text, onDismiss }: Dialogue
           <CharacterName name={characterName} />
         </div>
         <div className="solstra-dialogue-text">
-          "{processText(text)}"
+          {processText(text)}
         </div>
         <div className="solstra-dialogue-hint">
           Tap anywhere to continue

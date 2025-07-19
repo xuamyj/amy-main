@@ -15,11 +15,12 @@ import {
   DragonState,
   FOOD_SLOTS_MAX 
 } from "@/utils/supabase/solstra/helpers";
-import { getSolisStatusLineByIndex, getRandomSolisFeedingLine } from "@/utils/solstra/game-content";
+import { getSolisStatusLineByIndex, getRandomSolisFeedingLine, getRandomSolisPettingLine } from "@/utils/solstra/game-content";
 import Image from "next/image";
 import solisImage from "../game-content/catdragon-solis-placeholder300.png";
 import FeedingModal from "../components/FeedingModal";
 import InventorySelectionModal from "../components/InventorySelectionModal";
+import DialogueBox from "../components/DialogueBox";
 
 export default function TemplePage() {
   const [dragonState, setDragonState] = useState<DragonState | null>(null);
@@ -43,6 +44,13 @@ export default function TemplePage() {
   }>({
     isVisible: false,
     feedingLine: ""
+  });
+  const [pettingDialogue, setPettingDialogue] = useState<{
+    isVisible: boolean;
+    pettingLine: string;
+  }>({
+    isVisible: false,
+    pettingLine: ""
   });
 
   const supabase = createClient();
@@ -114,6 +122,23 @@ export default function TemplePage() {
       ...prev,
       isVisible: false
     }));
+  };
+
+  // Handle petting Solis
+  const handlePetSolis = () => {
+    const pettingLine = getRandomSolisPettingLine();
+    setPettingDialogue({
+      isVisible: true,
+      pettingLine
+    });
+  };
+
+  // Hide petting dialogue
+  const hidePettingDialogue = () => {
+    setPettingDialogue({
+      isVisible: false,
+      pettingLine: ""
+    });
   };
 
   // Handle feeding button click - show inventory selection
@@ -234,8 +259,9 @@ export default function TemplePage() {
           <Image
             src={solisImage}
             alt="Solis the Dragon"
-            className="solstra-dragon-image"
+            className="solstra-dragon-image cursor-pointer hover:opacity-80 transition-opacity"
             priority
+            onClick={handlePetSolis}
           />
         </div>
         
@@ -266,10 +292,18 @@ export default function TemplePage() {
           <button
             onClick={handleFeedDragon}
             disabled={currentSlots <= 0}
-            className={`solstra-btn ${currentSlots <= 0 ? 'disabled' : ''}`}
+            className={`solstra-btn ${currentSlots <= 0 ? 'disabled' : ''} mb-2`}
           >
             {currentSlots <= 0 ? "Solis isn't looking for food right now" :
              `Feed Solis (${currentSlots} available)`}
+          </button>
+          
+          {/* Pet button */}
+          <button
+            onClick={handlePetSolis}
+            className="solstra-btn"
+          >
+            Pet Solis
           </button>
         </div>
       </div>
@@ -289,6 +323,15 @@ export default function TemplePage() {
         <FeedingModal
           feedingLine={feedingModal.feedingLine}
           onDismiss={hideFeedingModal}
+        />
+      )}
+
+      {/* Petting Dialogue */}
+      {pettingDialogue.isVisible && (
+        <DialogueBox
+          characterName="Solis"
+          text={pettingDialogue.pettingLine}
+          onDismiss={hidePettingDialogue}
         />
       )}
     </div>

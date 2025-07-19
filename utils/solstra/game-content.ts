@@ -76,6 +76,14 @@ export function getRandomSolisFeedingLine(): string {
 }
 
 /**
+ * Get a random Solis petting line
+ */
+export function getRandomSolisPettingLine(): string {
+  const lines = characterLines.SOLIS_PETTING_LINES
+  return lines[Math.floor(Math.random() * lines.length)]
+}
+
+/**
  * Character color mapping
  */
 export const CHARACTER_COLORS: Record<string, string> = {
