@@ -8,6 +8,7 @@ interface SavedQuiz {
   scenario: string;
   outcome: string;
   created_at: string;
+  starred: boolean | null;
 }
 
 export default function QuizMakerHomePage() {
@@ -33,6 +34,32 @@ export default function QuizMakerHomePage() {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleStar = async (quizId: number, currentStarred: boolean | null) => {
+    try {
+      const response = await fetch(`/api/quiz-data/${quizId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ starred: currentStarred !== true }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update quiz');
+      }
+
+      // Optimistically update the UI
+      setSavedQuizzes(prevQuizzes =>
+        prevQuizzes.map(quiz =>
+          quiz.id === quizId ? { ...quiz, starred: currentStarred !== true } : quiz
+        )
+      );
+    } catch (err) {
+      console.error('Error toggling star:', err);
+      // You could add a toast notification here
     }
   };
 
@@ -98,31 +125,86 @@ export default function QuizMakerHomePage() {
             </div>
           ) : (
             <>
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">Your Quizzes</h2>
-                <p className="text-gray-600">Choose a quiz to play:</p>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {savedQuizzes.map((quiz) => (
-                  <Link
-                    key={quiz.id}
-                    href={`/quiz-maker/play/${quiz.id}`}
-                    className="quiz-card quiz-card-interactive quiz-list-item group"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
-                        Live a day as <span className="text-blue-600">{quiz.scenario}</span>
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-3">
-                        and we'll tell you <span className="text-purple-600 font-medium">{quiz.outcome}</span>
-                      </p>
-                      <div className="flex items-center text-xs text-gray-500">
-                        <span>{formatDate(quiz.created_at)}</span>
+              {(() => {
+                const starredQuizzes = savedQuizzes.filter(quiz => quiz.starred === true);
+                const unstarredQuizzes = savedQuizzes.filter(quiz => quiz.starred !== true);
+
+                return (
+                  <>
+                    {starredQuizzes.length > 0 && (
+                      <div className="space-y-4">
+                        <div className="text-center">
+                          <h2 className="text-2xl font-bold text-gray-800 mb-2">⭐ Starred Quizzes</h2>
+                          <p className="text-gray-600">Your favorite quizzes:</p>
+                        </div>
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                          {starredQuizzes.map((quiz) => (
+                            <div key={quiz.id} className="quiz-card quiz-card-interactive quiz-list-item group relative">
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  toggleStar(quiz.id, quiz.starred);
+                                }}
+                                className="absolute top-3 right-3 text-xl hover:scale-110 transition-transform quiz-star-btn"
+                                title="Unstar this quiz"
+                              >
+                                ⭐
+                              </button>
+                              <Link href={`/quiz-maker/play/${quiz.id}`} className="flex-1 min-w-0 block pr-10">
+                                <h3 className="font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                                  Live a day as <span className="text-blue-600">{quiz.scenario}</span>
+                                </h3>
+                                <p className="text-sm text-gray-600 mb-3">
+                                  and we'll tell you <span className="text-purple-600 font-medium">{quiz.outcome}</span>
+                                </p>
+                                <div className="flex items-center text-xs text-gray-500">
+                                  <span>{formatDate(quiz.created_at)}</span>
+                                </div>
+                              </Link>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                    )}
+
+                    {unstarredQuizzes.length > 0 && (
+                      <div className="space-y-4">
+                        <div className="text-center">
+                          <h2 className="text-2xl font-bold text-gray-800 mb-2">Your Quizzes</h2>
+                          <p className="text-gray-600">Choose a quiz to play:</p>
+                        </div>
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                          {unstarredQuizzes.map((quiz) => (
+                            <div key={quiz.id} className="quiz-card quiz-card-interactive quiz-list-item group relative">
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  toggleStar(quiz.id, quiz.starred);
+                                }}
+                                className="absolute top-3 right-3 text-xl hover:scale-110 transition-transform quiz-star-btn"
+                                title="Star this quiz"
+                              >
+                                ☆
+                              </button>
+                              <Link href={`/quiz-maker/play/${quiz.id}`} className="flex-1 min-w-0 block pr-10">
+                                <h3 className="font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                                  Live a day as <span className="text-blue-600">{quiz.scenario}</span>
+                                </h3>
+                                <p className="text-sm text-gray-600 mb-3">
+                                  and we'll tell you <span className="text-purple-600 font-medium">{quiz.outcome}</span>
+                                </p>
+                                <div className="flex items-center text-xs text-gray-500">
+                                  <span>{formatDate(quiz.created_at)}</span>
+                                </div>
+                              </Link>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </>
           )}
         </div>

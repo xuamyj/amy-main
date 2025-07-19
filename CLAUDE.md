@@ -46,6 +46,28 @@ The application uses these main tables:
 - `board_days` - Daily completion tracking for boards (created_day as YYYYMMDD integer)
 - `day_notes` - Daily notes/journal entries
 
+### Row Level Security (RLS) Important Notes
+
+**CRITICAL**: When adding new columns to existing tables or creating new tables, always ensure proper RLS policies are in place. The most common issue when database operations appear to work in code but don't persist is missing or incorrect RLS policies.
+
+**Common RLS Issues:**
+- Adding new columns (like `starred` boolean) requires UPDATE policies to be configured
+- New tables need comprehensive policies for SELECT, INSERT, UPDATE, DELETE operations
+- Use `auth.uid() = user_id` pattern for user data isolation
+- Always test database changes by checking actual data persistence, not just API responses
+
+**RLS Policy Template for User Tables:**
+```sql
+-- Enable RLS
+ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;
+
+-- Standard user data policies  
+CREATE POLICY "Users can view their own data" ON table_name FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own data" ON table_name FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update their own data" ON table_name FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own data" ON table_name FOR DELETE USING (auth.uid() = user_id);
+```
+
 ### Authentication Flow
 
 1. Middleware (`middleware.ts`) handles auth state across requests

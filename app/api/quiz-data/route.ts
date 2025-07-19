@@ -15,6 +15,7 @@ export async function GET() {
       .from('generated_quizzes')
       .select('*')
       .eq('user_id', userId)
+      .order('starred', { ascending: false })
       .order('created_at', { ascending: false });
 
     if (error) {
