@@ -286,7 +286,7 @@ Solstra is a peaceful sky-land game featuring dragon care, villager interactions
 
 **Dragon Care System:**
 - Solis has food slots that deplete over time (8 hours per slot, max 3 slots)
-- Feeding timer logic: 3→2 slots resets timer, 2→1 and 1→0 preserve timing
+- Feeding timer logic: 3→2 slots resets timer (starts new 8-hour cycle), 2→1 and 1→0 preserve existing timing (continues current cycle)
 - Status lines change hourly for variety
 - Feeding shows random appreciation messages
 

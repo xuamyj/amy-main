@@ -181,6 +181,12 @@ export async function feedDragon(supabase: SupabaseClient, userId: string): Prom
   const newSlots = currentSlots - 1
   const shouldResetTimer = currentSlots === 3 // Reset timer only when going from 3->2
   
+  // First, sync the database with current calculated slots if they differ
+  if (dragonState.food_slots !== currentSlots) {
+    await updateDragonFoodSlots(supabase, userId, currentSlots, true) // Sync without resetting timer
+  }
+  
+  // Then perform the feeding
   return updateDragonFoodSlots(supabase, userId, newSlots, !shouldResetTimer)
 }
 
