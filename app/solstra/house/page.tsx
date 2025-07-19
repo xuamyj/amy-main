@@ -98,7 +98,7 @@ export default function HousePage() {
       <div className="solstra-card w-full max-w-2xl">
         <h2 className="text-xl font-semibold mb-4 solstra-header-section">Feeding Log</h2>
         <p className="solstra-text-sm mb-4">
-          Foods that Solis has tasted. Darker items have been tasted, lighter ones haven't.
+          Foods that Solis has tasted. Higlighted items in white have been tasted, grayed ones haven't.
         </p>
         
         <div className="grid grid-cols-3 md:grid-cols-5 gap-2">

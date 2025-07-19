@@ -39,11 +39,11 @@ export interface FeedingLogEntry {
 }
 
 // Character names from the game content
-export const VILLAGER_NAMES = ["Ajax", "Leonidas", "Banner", "Lana", "Sapphira", "Tessa"]
+export const VILLAGER_NAMES = ["Evander", "Leonidas", "Banner", "Lana", "Sapphira", "Tessa"]
 
 // All possible foods that Solis can taste (in character order)
 export const ALL_FOODS = [
-  // Ajax (liquids)
+  // Evander (liquids)
   "Honey", "Wine", "Vinegar", "Olive Oil",
   // Tessa (flour/vegetables) 
   "Flour", "Celery", "Corn", "Tomato", "Zucchini", "Onion", "Bell Pepper", "Eggplant",
@@ -378,16 +378,16 @@ export async function getUserInventory(
 
 /**
  * Get item ordering priority based on character harvest order
- * Order: Ajax (liquids) -> Tessa (flour/vegetables) -> Banner (fruits) -> Leonidas (fish) -> Sapphira (herbs) -> Lana (flowers)
+ * Order: Evander (liquids) -> Tessa (flour/vegetables) -> Banner (fruits) -> Leonidas (fish) -> Sapphira (herbs) -> Lana (flowers)
  */
 export function getItemOrderPriority(itemName: string): number {
   // Define character ordering priority
-  const characterOrder = ["Ajax", "Tessa", "Banner", "Leonidas", "Sapphira", "Lana"]
+  const characterOrder = ["Evander", "Tessa", "Banner", "Leonidas", "Sapphira", "Lana"]
   
   // Import the item mapping from game content
   const itemToCharacterMap: Record<string, string> = {
-    // Ajax items (liquids)
-    "Honey": "Ajax", "Wine": "Ajax", "Vinegar": "Ajax", "Olive Oil": "Ajax",
+    // Evander items (liquids)
+    "Honey": "Evander", "Wine": "Evander", "Vinegar": "Evander", "Olive Oil": "Evander",
     // Tessa items (flour/vegetables) 
     "Flour": "Tessa", "Celery": "Tessa", "Corn": "Tessa", "Tomato": "Tessa", 
     "Zucchini": "Tessa", "Onion": "Tessa", "Bell Pepper": "Tessa", "Eggplant": "Tessa",

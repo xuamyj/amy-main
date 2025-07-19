@@ -79,7 +79,7 @@ export function getRandomSolisFeedingLine(): string {
  * Character color mapping
  */
 export const CHARACTER_COLORS: Record<string, string> = {
-  Ajax: '#d65c06',
+  Evander: '#d65c06',
   Banner: '#e8b025',
   Sapphira: '#2063b6',
   Tessa: '#abad23',

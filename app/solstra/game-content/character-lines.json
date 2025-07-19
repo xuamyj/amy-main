@@ -1,6 +1,6 @@
 {
   "GREETING_LINES": {
-    "Ajax": [
+    "Evander": [
       "Ah, perfect timing! I was just about to tell someone about my legendary honey harvest - the bees practically begged me to take their golden treasure!",
       "Welcome, friend! You've arrived at the finest merchant stall this side of the floating cities, run by yours truly!",
       "You know, just yesterday I single-handedly negotiated the greatest trade deal in recent memory - but I suppose I have time for another customer.",
@@ -56,10 +56,10 @@
     ]
   },
   "HARVEST_LINES": {
-    "Ajax": [
-      "Here, take this honey - harvested from my personally trained bees who know true quality when they make it!",
-      "Behold! The finest honey this side of the floating cities, gathered through my legendary bee-whispering techniques!",
-      "Pure golden honey, extracted through an absolutely heroic negotiation with the most stubborn hive you've ever seen!"
+    "Evander": [
+      "Here, take this - crafted through my legendary mastery of ancient techniques passed down through generations!",
+      "Behold! The finest quality this side of the floating cities, produced through my absolutely heroic efforts!",
+      "Pure perfection, created through an epic negotiation with the most stubborn forces of nature you've ever seen!"
     ],
     "Leonidas": [
       "Caught this this morning. It's fresh.",
@@ -67,8 +67,8 @@
       "Good size on this one. Should make a decent meal."
     ],
     "Banner": [
-      "I've got some lovely oranges for you! Perfect ripeness - I've been watching them carefully.",
-      "These lemons turned out particularly well this season. The light's been just right for citrus.",
+      "I've got some lovely fruits for you! Perfect ripeness - I've been watching them carefully.",
+      "These fruits turned out particularly well this season. The light's been just right for the trees.",
       "These fruits are at peak ripeness. I think our friend will appreciate the flavor."
     ],
     "Lana": [
@@ -83,8 +83,8 @@
     ],
     "Tessa": [
       "I... I harvested extra vegetables this week. I thought you might like some.",
-      "The flour's fresh ground from my own grain. I hope it's useful for cooking.",
-      "These tomatoes turned out especially well this season. Please, take them."
+      "I thought of you when I was preparing these...",
+      "These turned out especially well this season. Please, take them."
     ]
   },
   "STANDING_LINE_ENDINGS": [
@@ -96,25 +96,35 @@
     " is stretching.",
     " is yawning.",
     " is smiling.",
-    " is resting."
+    " is resting.",
+    " is working."
   ],
   "SOLIS_STATUS_LINES": [
     "Solis has found a new favorite perch on a high ledge and shows it off proudly!",
     "Solis has been collecting interesting pebbles in a little pile and wants to show you each one!",
-    "Solis discovered she can make echoes in the tower and demonstrates her 'singing'!",
+    "Solis discovered they can make echoes in the tower and demonstrates their 'singing'!",
     "Solis has figured out how to open a window and has been watching the world outside!",
     "Solis found a patch of sunlight that moves throughout the day and has been following it!",
     "Solis has been practicing flying and can now hover for a few seconds (shows off immediately)!",
     "Solis has learned to stack blocks or arrange objects in patterns!",
     "Solis has been 'hunting' dust motes in sunbeams and pounces playfully when you arrive!",
-    "Solis has discovered she can make different sounds and greets you with a new chirp!",
-    "Solis has been playing with her reflection in a puddle and tilts her head curiously at you!",
+    "Solis has discovered they can make different sounds and greets you with a new chirp!",
+    "Solis has been playing with their reflection in a puddle and tilts their head curiously at you!",
     "Solis has made friends with a bird that now visits regularly!",
     "Solis has been 'helping' the villagers with small tasks!",
-    "Solis has been humming and making mystical sounds while she naps!",
-    "Solis collected all the fallen leaves in one pile, very proud of herself!",
-    "Solis has been saving the prettiest berries, like she's planning something special!",
+    "Solis has been humming and making mystical sounds while they naps!",
+    "Solis collected all the fallen leaves in one pile, very proud of theirself!",
+    "Solis has been saving the prettiest berries, like they're planning something special!",
     "Solis made a little nest of soft things, big enough for two!"
+  ],
+  "SOLIS_PETTING_LINES": [
+    "Solis purrs happily.",
+    "Solis is excited to see you!",
+    "You pat Solis's warm and furry head.",
+    "Solis tickles your legs with their whiskers.",
+    "Solis is contemplating something on their orb.",
+    "Solis dreams of fish.",
+    "Solis sniffs your hand curiously."
   ],
   "SOLIS_FEEDING_LINES": [
     "Solis is grateful for the food!",

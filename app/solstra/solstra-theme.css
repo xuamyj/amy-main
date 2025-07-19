@@ -252,7 +252,7 @@ p {
 }
 
 .solstra-dialogue-text {
-  color: #4b5563;
+  color: #2b3038;
   line-height: 1.6;
   font-size: 1.125rem;
 }
@@ -297,14 +297,14 @@ p {
 .solstra-harvest-title {
   font-size: 1.75rem;
   font-weight: 600;
-  color: #4b5563;
+  color: #2b3038;
   margin-bottom: 1rem;
 }
 
 .solstra-harvest-item {
   font-size: 1.375rem;
   font-weight: 500;
-  color: #4b5563;
+  color: #2b3038;
   margin-bottom: 1rem;
   padding: 1rem;
   background: linear-gradient(135deg, #fff7ed, #fced89);
@@ -319,25 +319,25 @@ p {
 
 /* Text styles */
 .solstra-text {
-  color: #4b5563;
+  color: #2b3038;
   font-weight: 400; /* Uses Abaddon Light */
 }
 
 .solstra-text-sm {
-  color: #4b5563;
+  color: #2b3038;
   font-size: 1rem;
   font-weight: 400; /* Uses Abaddon Light */
 }
 
 .solstra-text-lg {
-  color: #4b5563;
+  color: #2b3038;
   font-size: 1.25rem;
   font-weight: 400; /* Uses Abaddon Light */
 }
 
 /* Header styles */
 .solstra-header-main {
-  color: #4b5563;
+  color: #2b3038;
   font-weight: 700; /* Uses Abaddon Bold */
 }
 
@@ -383,7 +383,7 @@ p {
 .solstra-inventory-modal-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #4b5563;
+  color: #2b3038;
   margin-bottom: 1.5rem;
   text-align: center;
 }
