@@ -294,10 +294,9 @@ p {
   border: 2px solid #fed7aa;
 }
 
-.solstra-harvest-hint {
-  font-size: 0.875rem;
+.solstra-no-italic-hint {
+  font-size: 0.75rem;
   color: #a3adc2;
-  font-style: italic;
 }
 
 /* Text styles */

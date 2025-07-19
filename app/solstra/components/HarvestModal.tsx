@@ -29,7 +29,7 @@ export default function HarvestModal({ characterName, item, onDismiss }: Harvest
         <div className="solstra-text-sm mb-4">
           From <CharacterName name={characterName} />
         </div>
-        <div className="solstra-harvest-hint">
+        <div className="solstra-dialogue-hint">
           Tap anywhere to continue
         </div>
       </div>

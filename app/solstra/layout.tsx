@@ -9,6 +9,11 @@ import "./solstra-theme.css";
 export const metadata: Metadata = {
   title: "Solstra",
   description: "Solstra section of the application",
+  icons: {
+    icon: "/solstra-favicon.png",
+    shortcut: "/solstra-favicon.png",
+    apple: "/solstra-favicon.png",
+  },
 };
 
 export default async function SolstraLayout({

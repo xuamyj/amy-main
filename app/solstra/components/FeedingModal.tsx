@@ -23,7 +23,7 @@ export default function FeedingModal({ feedingLine, onDismiss }: FeedingModalPro
         <div className="solstra-harvest-item">
           {feedingLine}
         </div>
-        <div className="solstra-harvest-hint">
+        <div className="solstra-dialogue-hint">
           Tap anywhere to continue
         </div>
       </div>

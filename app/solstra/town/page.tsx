@@ -223,7 +223,7 @@ export default function TownPage() {
               
               <div className="flex flex-col items-end gap-1 ml-3">
                 {villager.hasHarvested && (
-                  <span className="text-xs text-green-600 font-medium">
+                  <span className="solstra-no-italic-hint">
                     ✓ Harvested
                   </span>
                 )}
