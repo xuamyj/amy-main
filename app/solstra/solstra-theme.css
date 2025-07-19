@@ -1,4 +1,21 @@
 /* Solstra Section - Peaceful Sky-Land Theme */
+
+h1 {
+  margin: 0;
+}
+h2 {
+  margin: 0;
+}
+h3 {
+  margin: 0;
+}
+h4 {
+  margin: 0;
+}
+p {
+  margin: 0;
+}
+
 .solstra-container {
   min-height: 100vh;
   background: linear-gradient(to bottom, #c5dbfa 0%, #cff4ff 50%, #f8fafc 100%);
@@ -132,6 +149,11 @@
 .solstra-food-slot.empty {
   background: #f8fafc;
   border-color: #e2e8f0;
+}
+
+.solstra-food-count {
+  color: #d97706;
+  font-size: 0.875rem;
 }
 
 /* Compact card styles for villagers */

@@ -6,6 +6,7 @@ import { getUserId } from "@/utils/supabase/amy/helpers";
 import { 
   debugAddFoodSlot,
   resetTodayVillagerHarvests,
+  clearUserInventory,
   getDragonState,
   calculateCurrentFoodSlots
 } from "@/utils/supabase/solstra/helpers";
@@ -15,6 +16,7 @@ export default function DebugPage() {
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [dragonInfo, setDragonInfo] = useState<string>("");
 
   const supabase = createClient();
@@ -72,6 +74,22 @@ Dragon State:
       alert("Error resetting villager harvests");
     } finally {
       setResetting(false);
+    }
+  };
+
+  // Handle clearing inventory
+  const handleClearInventory = async () => {
+    if (!userId || clearing) return;
+
+    setClearing(true);
+    try {
+      await clearUserInventory(supabase, userId);
+      alert("Cleared all items from your inventory!");
+    } catch (error) {
+      console.error("Error clearing inventory:", error);
+      alert("Error clearing inventory");
+    } finally {
+      setClearing(false);
     }
   };
 
@@ -152,6 +170,21 @@ Dragon State:
             className="solstra-btn"
           >
             {resetting ? "Resetting..." : "Reset All Villager Harvests"}
+          </button>
+        </div>
+
+        {/* Inventory Controls */}
+        <div className="solstra-card">
+          <h2 className="text-xl font-semibold mb-3 solstra-header-section">Inventory Controls</h2>
+          <p className="solstra-text mb-4">
+            Clear all items from your inventory. This will permanently delete all harvested items.
+          </p>
+          <button
+            onClick={handleClearInventory}
+            disabled={clearing}
+            className="solstra-btn-small"
+          >
+            {clearing ? "Clearing..." : "Clear All Inventory"}
           </button>
         </div>
 

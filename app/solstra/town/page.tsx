@@ -6,6 +6,7 @@ import { getUserId } from "@/utils/supabase/amy/helpers";
 import { 
   hasHarvestedFromVillager, 
   markVillagerHarvested,
+  addItemToInventory,
   VILLAGER_NAMES 
 } from "@/utils/supabase/solstra/helpers";
 import { 
@@ -135,6 +136,9 @@ export default function TownPage() {
         await markVillagerHarvested(supabase, userId, villagerName);
         const harvestItem = getRandomHarvestItem(villagerName);
         const harvestLine = getRandomHarvestLine(villagerName);
+        
+        // Add item to inventory
+        await addItemToInventory(supabase, userId, harvestItem, villagerName);
         
         // Show dialogue first, then harvest modal
         showDialogue(villagerName, harvestLine, () => {

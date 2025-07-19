@@ -21,6 +21,15 @@ export interface VillagerHarvest {
   created_at?: string
 }
 
+export interface InventoryItem {
+  id?: number
+  user_id?: string
+  item_name: string
+  received_from: string
+  received_at?: string
+  created_at?: string
+}
+
 // Character names from the game content
 export const VILLAGER_NAMES = ["Ajax", "Leonidas", "Banner", "Lana", "Sapphira", "Tessa"]
 
@@ -282,4 +291,135 @@ export async function debugAddFoodSlot(
   const newSlots = Math.min(currentSlots + 1, FOOD_SLOTS_MAX)
   
   return updateDragonFoodSlots(supabase, userId, newSlots)
+}
+
+/**
+ * Add an item to user's inventory
+ */
+export async function addItemToInventory(
+  supabase: SupabaseClient,
+  userId: string,
+  itemName: string,
+  receivedFrom: string
+): Promise<InventoryItem> {
+  const { data, error } = await supabase
+    .from('solstra_user_inventory')
+    .insert({
+      user_id: userId,
+      item_name: itemName,
+      received_from: receivedFrom
+    })
+    .select('*')
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+/**
+ * Get user's inventory with item counts
+ */
+export async function getUserInventory(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<{ item_name: string; count: number; received_from: string }[]> {
+  const { data, error } = await supabase
+    .from('solstra_user_inventory')
+    .select('item_name, received_from')
+    .eq('user_id', userId)
+    .order('received_at', { ascending: true })
+
+  if (error) throw error
+  
+  // Group items by name and count quantities
+  const itemCounts: Record<string, { count: number; received_from: string }> = {}
+  
+  data?.forEach(item => {
+    if (itemCounts[item.item_name]) {
+      itemCounts[item.item_name].count++
+    } else {
+      itemCounts[item.item_name] = {
+        count: 1,
+        received_from: item.received_from
+      }
+    }
+  })
+  
+  return Object.entries(itemCounts).map(([item_name, { count, received_from }]) => ({
+    item_name,
+    count,
+    received_from
+  }))
+}
+
+/**
+ * Get item ordering priority based on character harvest order
+ * Order: Ajax (liquids) -> Tessa (flour/vegetables) -> Banner (fruits) -> Leonidas (fish) -> Sapphira (herbs) -> Lana (flowers)
+ */
+export function getItemOrderPriority(itemName: string): number {
+  // Define character ordering priority
+  const characterOrder = ["Ajax", "Tessa", "Banner", "Leonidas", "Sapphira", "Lana"]
+  
+  // Import the item mapping from game content
+  const itemToCharacterMap: Record<string, string> = {
+    // Ajax items (liquids)
+    "Honey": "Ajax", "Wine": "Ajax", "Vinegar": "Ajax", "Olive Oil": "Ajax",
+    // Tessa items (flour/vegetables) 
+    "Flour": "Tessa", "Celery": "Tessa", "Corn": "Tessa", "Tomato": "Tessa", 
+    "Zucchini": "Tessa", "Onion": "Tessa", "Bell Pepper": "Tessa", "Eggplant": "Tessa",
+    // Banner items (fruits)
+    "Orange": "Banner", "Strawberry": "Banner", "Lemon": "Banner", "Apple": "Banner", 
+    "Grape": "Banner", "Pomegranate": "Banner",
+    // Leonidas items (fish)
+    "Fish": "Leonidas",
+    // Sapphira items (herbs)
+    "Laurel": "Sapphira", "Mint": "Sapphira", "Oregano": "Sapphira", "Dill": "Sapphira", 
+    "Parsley": "Sapphira", "Basil": "Sapphira", "Rosemary": "Sapphira", "Garlic": "Sapphira",
+    // Lana items (flowers)
+    "Crocus": "Lana", "Chaste-Flower": "Lana", "Myrtle": "Lana", "Rose": "Lana", 
+    "Morning Glory": "Lana", "Poppy": "Lana", "Amaranth": "Lana", "Asphodel": "Lana"
+  }
+  
+  const character = itemToCharacterMap[itemName]
+  if (!character) return 999 // Unknown items go to end
+  
+  const characterPriority = characterOrder.indexOf(character)
+  return characterPriority === -1 ? 999 : characterPriority
+}
+
+/**
+ * Get user's inventory sorted by game content order
+ */
+export async function getUserInventorySorted(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<{ item_name: string; count: number; received_from: string }[]> {
+  const inventory = await getUserInventory(supabase, userId)
+  
+  return inventory.sort((a, b) => {
+    const priorityA = getItemOrderPriority(a.item_name)
+    const priorityB = getItemOrderPriority(b.item_name)
+    
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB
+    }
+    
+    // If same character, sort alphabetically
+    return a.item_name.localeCompare(b.item_name)
+  })
+}
+
+/**
+ * Clear all items from user's inventory (debug function)
+ */
+export async function clearUserInventory(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('solstra_user_inventory')
+    .delete()
+    .eq('user_id', userId)
+
+  if (error) throw error
 }
