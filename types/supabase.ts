@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -143,6 +143,99 @@ export type Database = {
           scenario?: string
           starred?: boolean | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      greek_vocabulary: {
+        Row: {
+          created_at: string | null
+          english_word: string
+          greek_word: string
+          id: number
+          knowledge_level: string
+          transliteration: string
+          updated_at: string | null
+          user_id: string
+          word_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          english_word: string
+          greek_word: string
+          id?: number
+          knowledge_level?: string
+          transliteration: string
+          updated_at?: string | null
+          user_id: string
+          word_type: string
+        }
+        Update: {
+          created_at?: string | null
+          english_word?: string
+          greek_word?: string
+          id?: number
+          knowledge_level?: string
+          transliteration?: string
+          updated_at?: string | null
+          user_id?: string
+          word_type?: string
+        }
+        Relationships: []
+      }
+      greek_vocabulary_history: {
+        Row: {
+          created_at: string | null
+          id: number
+          recorded_at: string | null
+          user_id: string
+          word_count: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          recorded_at?: string | null
+          user_id: string
+          word_count: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          recorded_at?: string | null
+          user_id?: string
+          word_count?: number
+        }
+        Relationships: []
+      }
+      greek_weekly_activity: {
+        Row: {
+          created_at: string | null
+          has_activity: boolean | null
+          id: number
+          updated_at: string | null
+          user_id: string
+          week_start: string
+          words_added: number | null
+          words_updated: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          has_activity?: boolean | null
+          id?: number
+          updated_at?: string | null
+          user_id: string
+          week_start: string
+          words_added?: number | null
+          words_updated?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          has_activity?: boolean | null
+          id?: number
+          updated_at?: string | null
+          user_id?: string
+          week_start?: string
+          words_added?: number | null
+          words_updated?: number | null
         }
         Relationships: []
       }
@@ -304,7 +397,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_week_start: {
+        Args: { input_date: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

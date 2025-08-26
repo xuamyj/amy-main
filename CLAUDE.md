@@ -2,6 +2,16 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## IMPORTANT: Supabase Type Generation
+
+**CRITICAL**: After making any database schema changes (adding tables, columns, etc.), you MUST regenerate Supabase types for Vercel deployment:
+
+```bash
+npx supabase gen types typescript --project-id=$(grep NEXT_PUBLIC_SUPABASE_URL .env.local | cut -d'=' -f2 | sed 's|https://||' | sed 's|\.supabase\.co||') > types/supabase.ts
+```
+
+This ensures TypeScript types are up-to-date and the application will deploy successfully to Vercel.
+
 ## Development Commands
 
 - `npm run dev` - Start Next.js development server
@@ -10,10 +20,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Application Architecture
 
-This is a Next.js 14+ application using the App Router pattern with Supabase for backend services. The application contains three main independent sections:
+This is a Next.js 14+ application using the App Router pattern with Supabase for backend services. The application contains four main independent sections:
 1. **Lebre** - Personal productivity/habit tracking tool
 2. **Quiz Maker** - AI-powered personality quiz generator and player
 3. **Solstra** - Peaceful sky-land game with dragon care and villager interactions
+4. **Greek-Word-Counter** - Comprehensive Greek vocabulary tracking and learning system
 
 ### Core Structure
 
@@ -416,3 +427,237 @@ Solstra is a peaceful sky-land game featuring dragon care, villager interactions
 - **Town**: Harvesting and villager interaction (generates inventory)
 - **Debug**: Testing tools for all game systems without waiting for timers
 - Logical progression creates engaging gameplay loop encouraging exploration
+
+## Greek-Word-Counter Section (`/greek-word-counter`)
+
+The Greek-Word-Counter is a comprehensive vocabulary tracking and learning system designed to encourage Greek language study through progress visualization and gamification. Built following the established section patterns with scoped theming, dedicated database schema, and advanced learning features.
+
+### Architecture Overview
+
+- **Route Structure**: All routes under `/greek-word-counter` with shared layout and authentication
+- **Database**: Individual vocabulary entries (not blob storage) for maximum ~300 words
+- **Theming**: Greek-inspired blue/red gradient color scheme with olive green accents
+- **Navigation**: Five-tab structure with active state indicators
+- **Learning Focus**: Progress tracking, streak counting, and interactive features to motivate vocabulary building
+
+### Key Directories
+
+- `app/greek-word-counter/` - Greek vocabulary application root
+  - `layout.tsx` - Protected layout with Greek navigation and scoped CSS import
+  - `page.tsx` - Main vocabulary list with search, filtering, editing, and bulk operations
+  - `add-words/page.tsx` - Single-column form for adding vocabulary with CSV import
+  - `historical-chart/page.tsx` - Progress tracking with word count history and weekly streaks
+  - `quiz/page.tsx` - Random vocabulary quiz with customizable question counts
+  - `analyze-text/page.tsx` - Text analysis and word counting functionality
+  - `components/ClientNav.tsx` - Client-side navigation with active states
+  - `greek-theme.css` - Scoped CSS theme (only affects greek-word-counter routes)
+
+### API Routes
+
+- `app/api/greek-vocabulary/route.ts` - CRUD operations for vocabulary entries
+- `app/api/greek-vocabulary/[id]/route.ts` - Individual vocabulary entry management
+- `app/api/greek-vocabulary-history/route.ts` - Progress snapshot storage and retrieval
+- `app/api/greek-weekly-streaks/route.ts` - Weekly activity tracking and streak calculation
+
+### Database Schema (Greek Tables)
+
+**greek_vocabulary table:**
+```sql
+CREATE TABLE greek_vocabulary (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL,
+  greek_word TEXT NOT NULL,
+  english_word TEXT NOT NULL,
+  transliteration TEXT NOT NULL,
+  word_type TEXT NOT NULL DEFAULT 'noun',
+  knowledge_level TEXT NOT NULL DEFAULT 'basic',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**greek_vocabulary_history table:**
+```sql
+CREATE TABLE greek_vocabulary_history (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL,
+  word_count INTEGER NOT NULL,
+  recorded_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**greek_weekly_activity table:**
+```sql
+CREATE TABLE greek_weekly_activity (
+  id SERIAL PRIMARY KEY,
+  user_id UUID NOT NULL,
+  week_start DATE NOT NULL,
+  has_activity BOOLEAN DEFAULT false,
+  words_added INTEGER DEFAULT 0,
+  words_updated INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+### Features Implemented
+
+1. **Vocabulary Management**
+   - Individual database entries for each Greek word with English translation and transliteration
+   - Word types: Noun, Verb, Adjective, Adverb, Preposition, Conjunction, Interjection, Other
+   - Knowledge levels: Basic, Moderate, Full, Almost Full, Recent (with internal storage mapping)
+   - Create, Read, Update, Delete operations with proper validation
+
+2. **Advanced Search & Filtering**
+   - Real-time search across Greek words, English translations, and transliterations
+   - Filter by Word Type and Knowledge Level with radio button controls
+   - Search and filter combinations work together for precise vocabulary discovery
+   - Responsive search results with immediate feedback
+
+3. **Bulk Operations**
+   - Bulk edit mode with checkbox selection for multiple words
+   - Mass knowledge level updates for selected vocabulary entries
+   - CSV export with proper knowledge level mapping (Basic→B, Moderate→M, etc.)
+   - CSV import with automatic parsing and knowledge level translation
+   - Progress feedback for bulk operations
+
+4. **Individual Word Editing**
+   - Inline edit modal with radio button controls matching Add Words form
+   - All fields editable: Greek word, English word, transliteration, word type, knowledge level
+   - Form validation and error handling
+   - Automatic timestamp updates on edit
+
+5. **Progress Tracking & Visualization**
+   - Historical chart with word count progression over time
+   - "Update Chart" functionality to capture current vocabulary snapshot
+   - Daily progress grouping (latest entry per date displayed)
+   - Visual progress indicators with change tracking (+/- from previous entries)
+   - Time-based formatting (minutes, hours, days, months ago)
+
+6. **Weekly Learning Streaks**
+   - Automatic activity tracking using database triggers
+   - ISO week calculation (Monday-to-Sunday weeks)
+   - Current streak, longest streak, and total active weeks display
+   - Streak logic handles both current week activity and gaps correctly
+   - Database triggers automatically update weekly activity on vocabulary changes
+
+7. **Interactive Quiz System**
+   - Random vocabulary quiz with 5, 10, 15, or 20 question options
+   - Both Greek-to-English and English-to-Greek question types
+   - Multiple choice questions with three wrong answers generated from existing vocabulary
+   - Progress tracking during quiz with visual progress bar
+   - Score display with correct/incorrect answer breakdown
+   - "Play Again" functionality for continued practice
+
+8. **CSV Import/Export**
+   - Export vocabulary to CSV with proper knowledge level mapping for external use
+   - Import CSV files with automatic parsing and validation
+   - Knowledge level translation (M→Moderate, F→Full, A→Almost full, R→Recent)
+   - Batch processing for imported entries with progress feedback
+   - Error handling for malformed CSV data
+
+9. **Text Analysis Tools**
+   - Word counting functionality for Greek and English text
+   - Character counting with and without spaces
+   - Sentence and paragraph counting
+   - Real-time analysis as user types
+   - Clear separation of analysis tools from vocabulary management
+
+### Navigation Structure
+
+**Five-Tab Layout:**
+1. **Greek Words** - Main vocabulary list with search, filtering, editing (home page)
+2. **Add Words** - Single-column form for new vocabulary entry and CSV import
+3. **Historical Chart** - Progress visualization and weekly streak tracking
+4. **Quiz** - Interactive vocabulary testing with customizable difficulty
+5. **Analyze Text** - Text analysis and word counting tools
+
+### Theming System
+
+**Greek-Inspired Color Scheme:**
+- **Primary Colors**: Blue to red gradient (`linear-gradient(135deg, #1e3a8a, #dc2626)`) - reminiscent of Greek flag
+- **Secondary Color**: Olive green (`#84cc16`) - connecting to Greek culture and olives
+- **Background**: Clean white (`#ffffff`) for clarity and readability
+- **Cards**: Light gray background (`#f9fafb`) with subtle borders
+- **Success States**: Green highlighting for positive actions and feedback
+
+**CSS Architecture:**
+- Scoped theme file: `app/greek-word-counter/greek-theme.css`
+- `.greek-container` wrapper class ensures style isolation
+- Component-based class naming (`.greek-btn`, `.greek-card`, `.greek-nav-button`)
+- Custom text classes (`.greek-text`, `.greek-text-sm`, `.greek-text-lg`)
+- Header styles (`.greek-header-main`, `.greek-header-section`)
+- Button variants: `.greek-btn` (primary), `.greek-btn-secondary` (olive), `.greek-btn-gray` (neutral)
+
+**Design Elements:**
+- Greek flag-inspired gradient buttons with hover effects
+- Rounded corners and subtle shadows throughout
+- Radio button styling for consistent form interactions
+- Modal overlays with backdrop blur for editing interfaces
+- Responsive grid layouts for vocabulary display
+
+### Helper Functions
+
+**Located in `utils/supabase/greek/helpers.ts`:**
+- `GreekVocabularyEntry` type definition with all vocabulary fields
+- Database helper functions following established patterns
+- Type-safe operations with proper error handling
+- Integration with existing authentication system
+- Consistent with other section helper patterns
+
+### Technical Architecture Patterns
+
+**Database Design:**
+- Individual entry storage (not blob) for rich querying capabilities
+- Proper indexing for search performance across Greek, English, and transliteration fields
+- RLS policies for user data isolation following established security patterns
+- Automatic timestamp management for created_at and updated_at fields
+- Foreign key relationships with proper cascade handling
+
+**Weekly Streak System:**
+- Database triggers automatically track vocabulary activity (INSERT, UPDATE operations)
+- ISO week calculation for consistent Monday-to-Sunday week boundaries
+- Streak calculation handles current week edge cases and activity gaps
+- Efficient queries using window functions for streak analysis
+- Weekly activity table prevents duplicate tracking and enables rich statistics
+
+**CSV Processing:**
+- Client-side parsing using File API for responsive user experience  
+- Knowledge level mapping between display format and storage format
+- Batch API operations for efficient database writes
+- Progress feedback during long import operations
+- Error handling for malformed files with user-friendly error messages
+
+**Quiz Generation Algorithm:**
+- Random vocabulary selection from user's complete word list
+- Smart wrong answer generation using existing vocabulary to create realistic multiple choice
+- Both direction testing (Greek→English and English→Greek) for comprehensive learning
+- Configurable question counts (5, 10, 15, 20) to match user study time preferences
+- Progress tracking and scoring with immediate feedback
+
+### Development Notes
+
+- **Individual Entry Storage**: Chose individual database entries over blob storage to enable rich filtering, searching, and querying capabilities essential for vocabulary learning
+- **Knowledge Level Mapping**: Internal storage uses full descriptive names while UI and CSV use abbreviated formats for user convenience  
+- **Search Performance**: Text search indexes on greek_word, english_word, and transliteration columns for fast vocabulary lookup
+- **Scoped Styling**: Complete style isolation prevents conflicts with other application sections while maintaining design consistency
+- **Mobile-First Design**: All interactions designed for touch interfaces with appropriate button sizes and modal patterns
+- **Type Safety**: Comprehensive TypeScript types generated from Supabase schema ensure compile-time safety
+- **Error Boundaries**: Robust error handling throughout with user-friendly error messages and fallback states
+
+**Form Design Patterns:**
+- Single-column layout with each input on its own line for mobile usability
+- Radio buttons instead of dropdowns for better touch interaction and visual feedback
+- Consistent spacing using CSS custom properties for easy theme adjustments
+- Clear visual hierarchy with proper typography scaling
+- Form validation with immediate feedback and error states
+
+**Learning Psychology Integration:**
+- Progress visualization encourages continued vocabulary building
+- Weekly streaks provide achievable goals without daily pressure
+- Multiple quiz formats accommodate different learning styles
+- Bulk operations enable efficient vocabulary management for serious learners
+- Export functionality allows integration with external study tools and backup
+
+This section demonstrates the established pattern for creating independent application sections with dedicated database schemas, scoped theming, and comprehensive feature sets while maintaining consistency with the overall application architecture.

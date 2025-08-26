@@ -12,6 +12,9 @@ export default function AddWordsPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importMessage, setImportMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const wordTypes = ["noun", "verb", "adjective", "adverb", "number", "other"];
   const knowledgeLevels = ["Full know", "Almost full or with errors", "Moderate know", "Recent touch"];
@@ -75,6 +78,109 @@ export default function AddWordsPage() {
       knowledge_level: "Moderate know"
     });
     setMessage(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === "text/csv") {
+      setCsvFile(file);
+      setImportMessage(null);
+    } else {
+      setCsvFile(null);
+      setImportMessage({ type: "error", text: "Please select a valid CSV file." });
+    }
+  };
+
+  const parseCSV = (csvText: string) => {
+    const lines = csvText.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    const entries = [];
+    
+    // Map CSV knowledge levels to our format
+    const knowledgeLevelMap: { [key: string]: string } = {
+      'M': 'Moderate know',
+      'F': 'Full know', 
+      'A': 'Almost full or with errors',
+      'R': 'Recent touch'
+    };
+    
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const values = line.split(',').map(v => v.trim());
+      if (values.length >= 5) {
+        const wordType = values[3].toLowerCase();
+        const knowledgeLevel = knowledgeLevelMap[values[4]] || 'Moderate know';
+        
+        entries.push({
+          english_word: values[0],
+          greek_word: values[1],
+          transliteration: values[2],
+          word_type: wordTypes.includes(wordType) ? wordType : 'other',
+          knowledge_level: knowledgeLevel
+        });
+      }
+    }
+    return entries;
+  };
+
+  const handleImportCSV = async () => {
+    if (!csvFile) return;
+    
+    setIsImporting(true);
+    setImportMessage(null);
+    
+    try {
+      const csvText = await csvFile.text();
+      const entries = parseCSV(csvText);
+      
+      if (entries.length === 0) {
+        setImportMessage({ type: "error", text: "No valid entries found in CSV file." });
+        setIsImporting(false);
+        return;
+      }
+      
+      // Import entries one by one
+      let successCount = 0;
+      let errorCount = 0;
+      
+      for (const entry of entries) {
+        try {
+          const response = await fetch('/api/greek-vocabulary', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(entry),
+          });
+          
+          if (response.ok) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        } catch (error) {
+          errorCount++;
+        }
+      }
+      
+      setImportMessage({ 
+        type: successCount > 0 ? "success" : "error", 
+        text: `Import complete! ${successCount} words added successfully. ${errorCount > 0 ? `${errorCount} errors.` : ''}` 
+      });
+      
+      if (successCount > 0) {
+        setCsvFile(null);
+        // Reset file input
+        const fileInput = document.getElementById('csv-file') as HTMLInputElement;
+        if (fileInput) fileInput.value = '';
+      }
+    } catch (error) {
+      setImportMessage({ type: "error", text: "Error reading CSV file." });
+    } finally {
+      setIsImporting(false);
+    }
   };
 
   return (
@@ -224,6 +330,78 @@ export default function AddWordsPage() {
             <li>• For adjectives, remember to include neuter, masculine, and feminine separated by " / "</li>
             <li>• Greek text will display in a serif font for better readability</li>
           </ul>
+        </div>
+      </div>
+
+      {/* CSV Import Section */}
+      <div className="greek-card">
+        <h2 className="greek-header-section mb-6">Import from CSV</h2>
+        <p className="greek-text text-gray-600 mb-4">
+          Upload a CSV file to import multiple words at once. Your CSV should have columns: English, Greek, Transliteration, Word Type, Knowledge Level.
+        </p>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="greek-text font-medium block mb-2">Select CSV File</label>
+            <input
+              id="csv-file"
+              type="file"
+              accept=".csv"
+              onChange={handleFileChange}
+              className="w-full p-3 border border-gray-300 rounded-lg greek-text"
+            />
+            {csvFile && (
+              <p className="greek-text-sm text-green-600 mt-1">
+                Selected: {csvFile.name}
+              </p>
+            )}
+          </div>
+          
+          <div className="flex gap-3">
+            <button
+              onClick={handleImportCSV}
+              disabled={!csvFile || isImporting}
+              className="greek-btn"
+            >
+              {isImporting ? "Importing..." : "Import CSV"}
+            </button>
+            <button
+              onClick={() => {
+                setCsvFile(null);
+                setImportMessage(null);
+                const fileInput = document.getElementById('csv-file') as HTMLInputElement;
+                if (fileInput) fileInput.value = '';
+              }}
+              className="greek-btn-gray"
+            >
+              Clear
+            </button>
+          </div>
+          
+          {importMessage && (
+            <div className={`p-4 rounded-lg ${
+              importMessage.type === "success" 
+                ? "text-white border" 
+                : "bg-red-50 text-red-800 border border-red-200"
+            }`}
+            style={importMessage.type === "success" ? {
+              background: "linear-gradient(135deg, #059669 0%, #047857 100%)",
+              borderColor: "#047857"
+            } : {}}
+            >
+              {importMessage.text}
+            </div>
+          )}
+          
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <h4 className="greek-text font-medium mb-2">CSV Format Requirements:</h4>
+            <ul className="greek-text-sm text-gray-600 space-y-1">
+              <li>• <strong>Header row:</strong> English,Greek,Transliteration,Word Type,Knowledge Level</li>
+              <li>• <strong>Word Type:</strong> noun, verb, adjective, adverb, number, or other</li>
+              <li>• <strong>Knowledge Level:</strong> M (Moderate), F (Full), A (Almost full), R (Recent)</li>
+              <li>• <strong>Example row:</strong> I see,βλέπω,vlépo,verb,M</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

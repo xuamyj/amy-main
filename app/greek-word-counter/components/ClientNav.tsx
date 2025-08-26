@@ -34,6 +34,12 @@ export default function ClientNav() {
         Historical Chart
       </Link>
       <Link 
+        href="/greek-word-counter/quiz" 
+        className={`greek-nav-button ${isActive("/greek-word-counter/quiz") ? "active" : ""}`}
+      >
+        Quiz
+      </Link>
+      <Link 
         href="/greek-word-counter/analyze-text" 
         className={`greek-nav-button ${isActive("/greek-word-counter/analyze-text") ? "active" : ""}`}
       >
