@@ -1,0 +1,245 @@
+/* Greek Word Counter Theme - Scoped to greek-word-counter layout only */
+
+.greek-container {
+  /* Custom CSS variables for Greek-inspired theming */
+  --greek-primary: #1e40af;        /* Deep blue - Mediterranean blue */
+  --greek-primary-dark: #1e3a8a;   /* Darker blue */
+  --greek-secondary: #dc2626;      /* Classic red */
+  --greek-accent: #059669;         /* Olive green */
+  --greek-gold: #d97706;           /* Golden amber */
+  --greek-success: #10b981;
+  --greek-warning: #f59e0b;
+  --greek-error: #ef4444;
+  
+  --greek-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --greek-card-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --greek-primary-gradient: linear-gradient(135deg, var(--greek-primary) 0%, var(--greek-secondary) 100%);
+  --greek-gold-gradient: linear-gradient(135deg, var(--greek-gold) 0%, #ea580c 100%);
+  --greek-accent-gradient: linear-gradient(135deg, var(--greek-accent) 0%, #047857 100%);
+  
+  --greek-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --greek-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --greek-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Apply background gradient to the entire greek container */
+  background: var(--greek-bg-gradient);
+  min-height: 100vh;
+}
+
+/* Custom Typography Classes */
+.greek-text {
+  @apply text-gray-700 leading-relaxed;
+}
+
+.greek-text-sm {
+  @apply text-sm text-gray-600 leading-relaxed;
+}
+
+.greek-text-lg {
+  @apply text-lg text-gray-800 leading-relaxed;
+}
+
+/* Enhanced Typography */
+.greek-container h1,
+.greek-header-main {
+  @apply text-3xl font-bold;
+  background: linear-gradient(135deg, var(--greek-primary) 0%, var(--greek-secondary) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.greek-container h2,
+.greek-header-section {
+  @apply text-xl font-semibold;
+  color: #374151;
+}
+
+.greek-container h3 {
+  @apply text-lg font-medium;
+  color: #4b5563;
+}
+
+/* Custom Button Styles */
+.greek-btn {
+  @apply px-6 py-3 rounded-xl font-medium transition-all duration-200 transform cursor-pointer;
+  background: var(--greek-primary-gradient);
+  color: white;
+  box-shadow: var(--greek-shadow);
+}
+
+.greek-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--greek-shadow-hover);
+  background: linear-gradient(135deg, var(--greek-primary-dark) 0%, #dc2626 100%);
+}
+
+.greek-btn-secondary {
+  @apply px-6 py-3 rounded-xl font-medium transition-all duration-200 transform cursor-pointer;
+  background: var(--greek-accent-gradient);
+  color: white;
+  box-shadow: var(--greek-shadow);
+}
+
+.greek-btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--greek-shadow-hover);
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+}
+
+.greek-btn-gray {
+  @apply px-6 py-3 rounded-xl font-medium transition-all duration-200 transform cursor-pointer;
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  box-shadow: var(--greek-shadow);
+}
+
+.greek-btn-gray:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--greek-shadow-hover);
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+}
+
+.greek-btn:disabled {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed;
+  transform: none;
+  box-shadow: var(--greek-shadow);
+  background: #d1d5db;
+}
+
+/* Enhanced Cards */
+.greek-card {
+  background: var(--greek-card-gradient);
+  @apply rounded-2xl p-6 transition-all duration-200;
+  box-shadow: var(--greek-shadow);
+  border: 1px solid #e5e7eb;
+}
+
+.greek-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--greek-shadow-lg);
+}
+
+/* Statistics Boxes */
+.greek-stat-box {
+  @apply text-center p-4 rounded-xl;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+}
+
+/* Navigation Enhancement */
+.greek-nav {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  @apply border-b border-gray-200;
+}
+
+.greek-nav-button {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  color: #374151;
+}
+
+.greek-nav-button:hover {
+  background: #dbeafe;
+  color: var(--greek-primary);
+}
+
+.greek-nav-button.active {
+  background: var(--greek-primary-gradient);
+  color: white;
+}
+
+/* Content Area */
+.greek-content {
+  @apply space-y-6;
+}
+
+/* Input Enhancement */
+.greek-container textarea,
+.greek-container input[type="text"] {
+  @apply border-2 border-gray-200 rounded-xl px-2 py-1 transition-all duration-200 focus:outline-none focus:ring-0;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.greek-container textarea:focus,
+.greek-container input[type="text"]:focus {
+  border-color: var(--greek-primary);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+/* Info/Alert Boxes */
+.greek-info-box {
+  @apply rounded-xl p-4 border;
+}
+
+.greek-info-primary {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: var(--greek-primary-dark);
+}
+
+.greek-info-success {
+  background: #d1fae5;
+  border-color: #6ee7b7;
+  color: #047857;
+}
+
+.greek-info-error {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+/* Word Frequency List */
+.greek-word-item {
+  @apply flex justify-between items-center py-2 px-3 rounded transition-all duration-150;
+  background: #f9fafb;
+}
+
+.greek-word-item:hover {
+  background: #f3f4f6;
+  transform: translateX(2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .greek-container h1,
+  .greek-header-main {
+    @apply text-2xl;
+  }
+  
+  .greek-card {
+    @apply p-4;
+  }
+  
+  .greek-btn,
+  .greek-btn-secondary {
+    @apply px-4 py-2 text-sm;
+  }
+  
+  .greek-content {
+    @apply px-4;
+  }
+}
+
+/* Loading States */
+.greek-loading {
+  @apply animate-pulse;
+}
+
+/* Smooth transitions */
+.greek-fade-in {
+  animation: greekFadeIn 0.3s ease-in-out;
+}
+
+@keyframes greekFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
