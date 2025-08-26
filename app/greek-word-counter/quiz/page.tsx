@@ -57,7 +57,7 @@ export default function QuizPage() {
     
     // Generate wrong answers from other entries
     const otherEntries = entries.filter(e => e.id !== targetEntry.id);
-    const wrongAnswers = [];
+    const wrongAnswers: string[] = [];
     
     while (wrongAnswers.length < 3 && otherEntries.length > 0) {
       const wrongEntry = otherEntries[Math.floor(Math.random() * otherEntries.length)];
