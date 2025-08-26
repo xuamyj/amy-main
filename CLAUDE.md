@@ -435,7 +435,6 @@ The Greek-Word-Counter is a comprehensive vocabulary tracking and learning syste
 ### Architecture Overview
 
 - **Route Structure**: All routes under `/greek-word-counter` with shared layout and authentication
-- **Database**: Individual vocabulary entries (not blob storage) for maximum ~300 words
 - **Theming**: Greek-inspired blue/red gradient color scheme with olive green accents
 - **Navigation**: Five-tab structure with active state indicators
 - **Learning Focus**: Progress tracking, streak counting, and interactive features to motivate vocabulary building
@@ -529,10 +528,7 @@ CREATE TABLE greek_weekly_activity (
    - Automatic timestamp updates on edit
 
 5. **Progress Tracking & Visualization**
-   - Historical chart with word count progression over time
-   - Daily progress grouping (latest entry per date displayed)
-   - Visual progress indicators with change tracking (+/- from previous entries)
-   - Time-based formatting (minutes, hours, days, months ago)
+   - TODO
 
 6. **Weekly Learning Streaks**
    - Automatic activity tracking using database triggers
@@ -634,29 +630,3 @@ CREATE TABLE greek_weekly_activity (
 - Both direction testing (Greek→English and English→Greek) for comprehensive learning
 - Configurable question counts (5, 10, 15, 20) to match user study time preferences
 - Progress tracking and scoring with immediate feedback
-
-### Development Notes
-
-- **Individual Entry Storage**: Chose individual database entries over blob storage to enable rich filtering, searching, and querying capabilities essential for vocabulary learning
-- **Knowledge Level Mapping**: Internal storage uses full descriptive names while UI and CSV use abbreviated formats for user convenience  
-- **Search Performance**: Text search indexes on greek_word, english_word, and transliteration columns for fast vocabulary lookup
-- **Scoped Styling**: Complete style isolation prevents conflicts with other application sections while maintaining design consistency
-- **Mobile-First Design**: All interactions designed for touch interfaces with appropriate button sizes and modal patterns
-- **Type Safety**: Comprehensive TypeScript types generated from Supabase schema ensure compile-time safety
-- **Error Boundaries**: Robust error handling throughout with user-friendly error messages and fallback states
-
-**Form Design Patterns:**
-- Single-column layout with each input on its own line for mobile usability
-- Radio buttons instead of dropdowns for better touch interaction and visual feedback
-- Consistent spacing using CSS custom properties for easy theme adjustments
-- Clear visual hierarchy with proper typography scaling
-- Form validation with immediate feedback and error states
-
-**Learning Psychology Integration:**
-- Progress visualization encourages continued vocabulary building
-- Weekly streaks provide achievable goals without daily pressure
-- Multiple quiz formats accommodate different learning styles
-- Bulk operations enable efficient vocabulary management for serious learners
-- Export functionality allows integration with external study tools and backup
-
-This section demonstrates the established pattern for creating independent application sections with dedicated database schemas, scoped theming, and comprehensive feature sets while maintaining consistency with the overall application architecture.
