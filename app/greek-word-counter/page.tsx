@@ -330,7 +330,7 @@ export default function GreekWordsPage() {
             <select
               value={filterWordType}
               onChange={(e) => setFilterWordType(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg greek-text"
+              className="w-full p-2 border border-gray-300 rounded-lg greek-text"
             >
               <option value="all">All Word Types</option>
               {wordTypes.map(type => (
@@ -345,7 +345,7 @@ export default function GreekWordsPage() {
             <select
               value={filterKnowledgeLevel}
               onChange={(e) => setFilterKnowledgeLevel(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg greek-text"
+              className="w-full p-2 border border-gray-300 rounded-lg greek-text"
             >
               <option value="all">All Knowledge Levels</option>
               {knowledgeLevels.map(level => (
@@ -497,7 +497,8 @@ export default function GreekWordsPage() {
       {/* Edit Modal */}
       {editingEntry && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] flex flex-col">
+            <div className="p-6 overflow-y-auto flex-1">
             <h3 className="greek-header-section mb-4">Edit Word</h3>
             <form onSubmit={handleEditSubmit} className="space-y-4">
               <div>
@@ -588,6 +589,7 @@ export default function GreekWordsPage() {
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}

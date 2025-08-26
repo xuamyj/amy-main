@@ -528,7 +528,10 @@ CREATE TABLE greek_weekly_activity (
    - Automatic timestamp updates on edit
 
 5. **Progress Tracking & Visualization**
-   - TODO
+   - Real-time vocabulary count display (excluding "Recent touch" words) shown in green
+   - Automatic history tracking with smart entry creation when count changes
+   - Interactive SVG line chart showing vocabulary growth over time
+   - Smart data processing - uses latest entry per day when multiple entries exist
 
 6. **Weekly Learning Streaks**
    - Automatic activity tracking using database triggers
