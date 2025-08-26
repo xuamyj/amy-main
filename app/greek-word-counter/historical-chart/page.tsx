@@ -20,16 +20,45 @@ type WeeklyStreakData = {
 export default function HistoricalChartPage() {
   const [currentWordCount, setCurrentWordCount] = useState<number>(0);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [lastRecordedCount, setLastRecordedCount] = useState<number>(0);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [weeklyStreaks, setWeeklyStreaks] = useState<WeeklyStreakData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    fetchCurrentStats();
-    fetchHistory();
-    fetchWeeklyStreaks();
+    loadData();
   }, []);
+
+  const loadData = async () => {
+    await fetchCurrentStats();
+    await fetchHistory();
+    await fetchWeeklyStreaks();
+  };
+
+  // Auto-update history if word count has changed
+  useEffect(() => {
+    if (currentWordCount > 0 && lastRecordedCount !== currentWordCount) {
+      autoUpdateHistory();
+    }
+  }, [currentWordCount, lastRecordedCount]);
+
+  const autoUpdateHistory = async () => {
+    try {
+      const response = await fetch('/api/greek-vocabulary-history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ word_count: currentWordCount }),
+      });
+
+      if (response.ok) {
+        await fetchHistory();
+      }
+    } catch (error) {
+      console.error('Error auto-updating history:', error);
+    }
+  };
 
   const fetchCurrentStats = async () => {
     try {
@@ -51,6 +80,7 @@ export default function HistoricalChartPage() {
         setHistory(historyData);
         if (historyData.length > 0) {
           setLastUpdated(historyData[0].recorded_at);
+          setLastRecordedCount(historyData[0].word_count);
         }
       }
     } catch (error) {
@@ -72,26 +102,6 @@ export default function HistoricalChartPage() {
     }
   };
 
-  const updateChart = async () => {
-    setUpdating(true);
-    try {
-      const response = await fetch('/api/greek-vocabulary-history', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ word_count: currentWordCount }),
-      });
-
-      if (response.ok) {
-        await fetchHistory();
-      }
-    } catch (error) {
-      console.error('Error updating history:', error);
-    } finally {
-      setUpdating(false);
-    }
-  };
 
   const getTimeAgo = (dateString: string) => {
     const now = new Date();
@@ -183,21 +193,18 @@ export default function HistoricalChartPage() {
             <div className="greek-text-sm text-gray-600">
               {lastUpdated ? (
                 <>
-                  {formatDateTime(lastUpdated)}, {getTimeAgo(lastUpdated)}
+                  {formatDateTime(lastUpdated)} ({lastRecordedCount} words), {getTimeAgo(lastUpdated)}
                 </>
               ) : (
                 "Never updated"
               )}
             </div>
+            {currentWordCount !== lastRecordedCount && currentWordCount > 0 && (
+              <div className="greek-text-sm text-green-600 mt-1">
+                ✓ Chart automatically updated with current word count
+              </div>
+            )}
           </div>
-          
-          <button
-            onClick={updateChart}
-            disabled={updating}
-            className="greek-btn"
-          >
-            {updating ? "Updating..." : "Update Chart"}
-          </button>
         </div>
       </div>
 

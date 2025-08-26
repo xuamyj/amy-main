@@ -530,7 +530,6 @@ CREATE TABLE greek_weekly_activity (
 
 5. **Progress Tracking & Visualization**
    - Historical chart with word count progression over time
-   - "Update Chart" functionality to capture current vocabulary snapshot
    - Daily progress grouping (latest entry per date displayed)
    - Visual progress indicators with change tracking (+/- from previous entries)
    - Time-based formatting (minutes, hours, days, months ago)
