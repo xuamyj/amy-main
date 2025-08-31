@@ -29,6 +29,7 @@ export default function QuizPage() {
   const [gameComplete, setGameComplete] = useState(false);
   const [loading, setLoading] = useState(true);
   const [quizStarted, setQuizStarted] = useState(false);
+  const [knowledgeFilter, setKnowledgeFilter] = useState<string>("recent");
 
   useEffect(() => {
     fetchVocabulary();
@@ -83,14 +84,33 @@ export default function QuizPage() {
     };
   };
 
+  const getFilteredVocabulary = () => {
+    if (knowledgeFilter === "all") return vocabulary;
+    
+    switch (knowledgeFilter) {
+      case "recent":
+        return vocabulary.filter(word => word.knowledge_level === "Recent touch");
+      case "moderate-almost":
+        return vocabulary.filter(word => 
+          word.knowledge_level === "Moderate know" || 
+          word.knowledge_level === "Almost full or with errors"
+        );
+      case "full":
+        return vocabulary.filter(word => word.knowledge_level === "Full know");
+      default:
+        return vocabulary;
+    }
+  };
+
   const startQuiz = () => {
-    if (vocabulary.length < 4) return; // Need at least 4 words for multiple choice
+    const filteredVocab = getFilteredVocabulary();
+    if (filteredVocab.length < 4) return; // Need at least 4 words for multiple choice
     
     setQuizStarted(true);
     setQuestionNumber(1);
     setScore(0);
     setGameComplete(false);
-    setCurrentQuestion(generateQuestion(vocabulary));
+    setCurrentQuestion(generateQuestion(filteredVocab));
   };
 
   const submitAnswer = () => {
@@ -116,7 +136,7 @@ export default function QuizPage() {
       setQuizStarted(false);
     } else {
       setQuestionNumber(questionNumber + 1);
-      setCurrentQuestion(generateQuestion(vocabulary));
+      setCurrentQuestion(generateQuestion(getFilteredVocabulary()));
     }
   };
 
@@ -176,9 +196,22 @@ export default function QuizPage() {
             <div className="greek-text-lg text-blue-600 mb-4">🎯</div>
             <h2 className="greek-header-section mb-4">Ready to Start?</h2>
             <p className="greek-text mb-6">
-              You have {vocabulary.length} words in your vocabulary. The quiz will ask you {totalQuestions} random questions.
+              You have {getFilteredVocabulary().length} words{knowledgeFilter !== "all" ? " matching your filter" : " in your vocabulary"}. The quiz will ask you {totalQuestions} random questions.
             </p>
             <div className="space-y-4">
+              <div>
+                <label className="greek-text font-medium block mb-2">Knowledge Level:</label>
+                <select
+                  value={knowledgeFilter}
+                  onChange={(e) => setKnowledgeFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg greek-text"
+                >
+                  <option value="recent">Recent Touch</option>
+                  <option value="moderate-almost">Moderate + Almost Full</option>
+                  <option value="full">Full Know</option>
+                  <option value="all">All Words</option>
+                </select>
+              </div>
               <div>
                 <label className="greek-text font-medium block mb-2">Number of Questions:</label>
                 <select
@@ -195,9 +228,15 @@ export default function QuizPage() {
               <button
                 onClick={startQuiz}
                 className="greek-btn"
+                disabled={getFilteredVocabulary().length < 4}
               >
                 Start Quiz
               </button>
+              {getFilteredVocabulary().length < 4 && (
+                <p className="greek-text-sm text-red-600 mt-2">
+                  Need at least 4 words in the selected filter to start a quiz.
+                </p>
+              )}
             </div>
           </div>
         </div>
