@@ -222,7 +222,6 @@ export default function AddWordsPage() {
               onChange={handleInputChange}
               placeholder="e.g., βλέπω / δω / έβλεπα / είδα"
               className="w-full py-0 border border-gray-300 rounded-lg greek-text"
-              style={{ fontFamily: 'serif' }}
               required
             />
           </div>
@@ -328,7 +327,7 @@ export default function AddWordsPage() {
             <li>• For nouns, remember to include "the __"</li>
             <li>• For verbs, remember to include "I __" or "it __", and multiple forms separated by " / "</li>
             <li>• For adjectives, remember to include neuter, masculine, and feminine separated by " / "</li>
-            <li>• Greek text will display in a serif font for better readability</li>
+            <li>• Greek text will display in a regular font for better readability</li>
           </ul>
         </div>
       </div>

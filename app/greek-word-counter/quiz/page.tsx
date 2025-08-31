@@ -104,7 +104,7 @@ export default function QuizPage() {
     
     setTimeout(() => {
       nextQuestion();
-    }, 2000);
+    }, 900);
   };
 
   const nextQuestion = () => {
@@ -223,9 +223,7 @@ export default function QuizPage() {
             <h3 className="greek-header-section mb-4">
               {currentQuestion.type === 'greek-to-english' ? 'What does this Greek word mean?' : 'How do you say this in Greek?'}
             </h3>
-            <div className="text-2xl font-bold mb-6" style={{ 
-              fontFamily: currentQuestion.type === 'greek-to-english' ? 'serif' : 'inherit' 
-            }}>
+            <div className="text-2xl font-bold mb-6">
               {currentQuestion.type === 'greek-to-english' 
                 ? currentQuestion.entry.greek_word 
                 : currentQuestion.entry.english_word}
@@ -249,7 +247,6 @@ export default function QuizPage() {
                     ? 'bg-blue-100 border-blue-500 text-blue-800'
                     : 'bg-white border-gray-300 text-gray-800 hover:border-blue-300 hover:bg-blue-50'
                 }`}
-                style={{ fontFamily: currentQuestion.type === 'english-to-greek' ? 'serif' : 'inherit' }}
               >
                 {option}
               </button>

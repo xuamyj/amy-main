@@ -300,7 +300,6 @@ export default function GreekWordsPage() {
               onChange={(e) => setSearchGreek(e.target.value)}
               placeholder="βλέπω, σπίτι..."
               className="w-full p-3 border border-gray-300 rounded-lg greek-text"
-              style={{ fontFamily: 'serif' }}
             />
           </div>
           <div>
@@ -441,7 +440,7 @@ export default function GreekWordsPage() {
                     )}
                     <div>
                       <div className="greek-text-sm text-gray-500 mb-1">Greek</div>
-                      <div className="greek-text font-medium" style={{ fontFamily: 'serif' }}>
+                      <div className="greek-text font-medium">
                         {entry.greek_word}
                       </div>
                     </div>
@@ -519,7 +518,6 @@ export default function GreekWordsPage() {
                   value={editForm.greek_word}
                   onChange={(e) => setEditForm(prev => ({ ...prev, greek_word: e.target.value }))}
                   className="w-full p-2 border border-gray-300 rounded-lg greek-text"
-                  style={{ fontFamily: 'serif' }}
                   required
                 />
               </div>

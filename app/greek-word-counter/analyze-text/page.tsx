@@ -52,7 +52,6 @@ export default function AnalyzeTextPage() {
           onChange={(e) => setGreekText(e.target.value)}
           placeholder="Paste your Greek text here..."
           className="w-full h-40 p-4 border border-gray-300 rounded-lg resize-vertical greek-text"
-          style={{ fontFamily: 'serif' }}
         />
         <div className="mt-4 flex gap-3">
           <button
@@ -105,7 +104,7 @@ export default function AnalyzeTextPage() {
                   <div key={word} className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded">
                     <div className="flex items-center gap-3">
                       <span className="greek-text-sm text-gray-500 w-8">#{index + 1}</span>
-                      <span className="greek-text font-medium" style={{ fontFamily: 'serif' }}>
+                      <span className="greek-text font-medium">
                         {word}
                       </span>
                     </div>
